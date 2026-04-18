@@ -1,0 +1,32 @@
+# 核心：Stanford 团队的 agent-native 计量经济学包
+statspai>=0.5.1
+
+# Stata 不作为 Python 依赖，单独安装。如果你装了 Stata 17+，可以用 stata-mcp 让 Claude 直接调
+# pyfixest / linearmodels: StatsPAI 的可选后端
+# pyfixest>=0.13.0          # 高维 FE，可选
+# linearmodels>=6.0         # IV / panel，StatsPAI 已内嵌
+
+# 数据处理
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.11.0
+
+# 可选：自动加载 .env
+python-dotenv>=1.0.1
+
+# 可选：验证图像/图表
+pillow>=10.3.0
+
+# 可选：调用 doubao-vision / OpenAI 兼容客户端
+openai>=1.40.0
+
+# 可选：进度条 / CLI 美化
+rich>=13.7.1
+
+# 可选：文件系统操作
+pathspec>=0.11.0
+
+# 测试（开发依赖）
+# pytest>=8.0
+# pytest-cov>=5.0
+# ruff>=0.6
