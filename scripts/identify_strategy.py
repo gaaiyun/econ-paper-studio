@@ -417,7 +417,9 @@ def render_report(brief: dict, strategies: list[Strategy], top_k: int = 3) -> st
         if s.pitfalls:
             lines.append('**Common pitfalls**:')
             for p in s.pitfalls:
-                lines.append(f'- ⚠️ {p}')
+                # 用 ASCII (!) 替代 ⚠️ —— 后者在 Windows GBK 终端报
+                # UnicodeEncodeError（CLI 实跑时发现）。Markdown 渲染仍清晰。
+                lines.append(f'- (!) {p}')
             lines.append('')
         if s.references:
             lines.append('**Key references**:')
@@ -477,7 +479,12 @@ def main() -> int:
     else:
         text = render_report(brief, strategies, top_k=args.top)
 
-    print(text)
+    # Windows GBK 终端不能渲染所有 Unicode（中文 OK，但 Emoji 不行）。
+    # 先尝试正常打印；失败时 fallback 到 utf-8 + replace 错误字符。
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        sys.stdout.buffer.write(text.encode('utf-8', errors='replace') + b'\n')
 
     if args.output:
         out_path = Path(args.output)

@@ -84,9 +84,29 @@ python scripts\identify_strategy.py --question "最低工资政策对就业的�
 
 ---
 
+## Testing
+
+98 个 pytest 测试，约 2 秒跑完，无网络 / 无外部依赖：
+
+```bash
+pip install -e ".[dev]"
+pytest tests/
+```
+
+| 测试文件 | 测试数 | 覆盖 |
+|---|---|---|
+| `tests/test_session.py` | 27 | session CRUD + 文件 IO + manifest / changelog 维护 |
+| `tests/test_identify_strategy.py` | 30 | 6 个识别策略决策树打分 + brief 加载 + 报告渲染 |
+| `tests/test_scaffold.py` | 20 | Stata/R 模板字典 + 内容质量 + CLI 端到端 |
+| `tests/test_cli.py` | 21 | 子命令分发 + 别名 + subprocess 端到端 |
+
+详见 [`TESTING.md`](./TESTING.md)。
+
+---
+
 ## License
 
-MIT。详见 [LICENSE](./LICENSE)（待加）。
+MIT。详见 [LICENSE](./LICENSE)。
 
 ---
 
