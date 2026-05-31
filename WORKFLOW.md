@@ -249,7 +249,7 @@ python scripts/robustness_checklist.py \
 
 **何时跳过**：只是内部分析报告，不是论文。
 
-**用什么**：所有写作工作 delegate 给 [`econ-write`](C:\Users\gaaiy\.codex\skills\econ-write) skill。
+**用什么**：所有写作工作 delegate 给 `econ-write` skill。
 
 **关键编排顺序**（这是 Cochrane 等的反复强调）：
 
