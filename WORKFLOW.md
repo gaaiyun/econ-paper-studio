@@ -92,7 +92,7 @@ question → design → execute → verify → write
 
 期刊定位决定**写作风格、稳健性深度、模型复杂度**——top 5 要求每个角度都堵死，field 期刊允许更聚焦。
 
-**Stage 1 产出**：把上面 5 个问题的答案写进 `outputs/<session>/RQ.md`，下一个阶段读这个文件。
+**Stage 1 产出**：把上面 5 个问题整理成 `research_brief.yaml`。可以直接参考 `examples/case-min-wage-did/research_brief.yaml`，下一个阶段用 `--brief` 读取。
 
 ---
 
@@ -108,10 +108,10 @@ question → design → execute → verify → write
 **用什么**：
 
 ```bash
-python scripts/identify_strategy.py --rq outputs/<session>/RQ.md
+python scripts/identify_strategy.py --brief outputs/<session>/research_brief.yaml
 ```
 
-脚本会基于 `RQ.md` 里的 Q3 (数据) + Q4 (识别威胁) 走一个决策树，推荐 1-2 个候选策略，并指出每个的关键 trade-off。
+脚本会基于 brief 里的数据结构、识别策略雏形、自然实验和识别威胁走一个决策树，推荐 1-2 个候选策略，并指出每个的关键 trade-off。
 
 ### 决策树概要
 
@@ -208,14 +208,13 @@ outputs/my-mw-study/
 **用什么**：
 
 ```bash
-python scripts/robustness_checklist.py \
+python scripts/robustness_checks.py \
   --strategy DiD \
-  --staggered yes \
-  --multi-outcome yes \
-  --output outputs/<session>/robustness/CHECKLIST.md
+  --analysis outputs/<session> \
+  --output outputs/<session>/verify_report.md
 ```
 
-会基于策略 + 你回答的几个细分情况，生成一份**针对性的**稳健性清单。
+会基于策略扫描分析脚本和论文文本，生成一份**针对性的**静态核验报告。它是离线质量闸门，不替代真实 Stata/R/Python 运行或外部引用核验。
 
 ### DiD 案例的清单（典型）
 
@@ -276,16 +275,13 @@ outputs/<session>/paper/
 ### R&R 流程
 
 ```bash
-python scripts/referee_response.py \
-  --session my-mw-study \
+python scripts/session.py add-review my-mw-study \
+  --version r1 \
   --letter referee_letter.pdf \
-  --output outputs/my-mw-study/referee_response/r1/
+  --decision major
 ```
 
-会按 `econ-write` 的 referee-response 章节风格生成响应模板：
-- 每个 referee 一个文件
-- 每个 comment 一节，包含：原意见 → 我们的回应 → 论文中具体修改位置
-- 自动从 session manifest 提取版本变更（哪一稿改了哪些）
+当前版本先把审稿意见登记进 session manifest 和 `CHANGELOG.md`。点对点 response 生成属于后续路线图；不要在当前版本中假装已经自动生成了修改位置。
 
 ---
 
@@ -296,10 +292,11 @@ python scripts/referee_response.py \
 每个阶段的产物都必须是**可复现包**的一部分。session 目录就是天然的 replication package：
 
 ```bash
-python scripts/replication_package.py --session my-mw-study --output mw_study_replication.zip
+python scripts/session.py show my-mw-study
+python scripts/robustness_checks.py --strategy DiD --analysis outputs/my-mw-study
 ```
 
-打包出去的 zip 应该包含：
+当前版本把 session 目录作为 replication package 的雏形。正式打包功能仍是后续路线图；人工打包时应该包含：
 - 所有原始/中间/最终数据（或数据获取脚本）
 - 所有 do 文件 + R 脚本
 - 一个 `00_master.do` / `00_master.R` 串起来
@@ -338,23 +335,17 @@ python scripts/session.py init my-mw-study \
   --strategy DiD --target-journal "AEJ:Applied"
 
 # Stage 2: 识别策略选择
-python scripts/identify_strategy.py --rq outputs/my-mw-study/RQ.md
+python scripts/identify_strategy.py --brief examples/case-min-wage-did/research_brief.yaml \
+  --output outputs/my-mw-study/identify_strategy.md
 
 # Stage 3: 生成代码骨架
 python scripts/scaffold.py --strategy DiD --session my-mw-study
 
-# Stage 4: 稳健性清单
-python scripts/robustness_checklist.py \
-  --strategy DiD --staggered yes \
-  --output outputs/my-mw-study/robustness/CHECKLIST.md
-
-# Stage 5: R&R 响应模板
-python scripts/referee_response.py \
-  --session my-mw-study --letter referee_letter.pdf
-
-# 打包 replication
-python scripts/replication_package.py --session my-mw-study \
-  --output mw_replication.zip
+# Stage 4: 离线质量核验
+python scripts/robustness_checks.py \
+  --strategy DiD \
+  --analysis outputs/my-mw-study \
+  --output outputs/my-mw-study/verify_report.md
 
 # 看历史
 python scripts/session.py show my-mw-study
@@ -364,8 +355,8 @@ python scripts/session.py show my-mw-study
 
 ```bash
 econ-studio init my-mw-study --rq "..." --strategy DiD
-econ-studio identify --rq RQ.md
+econ-studio identify --brief examples/case-min-wage-did/research_brief.yaml
 econ-studio scaffold --strategy DiD --session my-mw-study
-econ-studio verify --strategy DiD --session my-mw-study
-econ-studio referee --session my-mw-study --letter letter.pdf
+econ-studio verify --strategy DiD --analysis outputs/my-mw-study
+econ-studio add-review my-mw-study --version r1 --letter letter.pdf --decision major
 ```

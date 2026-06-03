@@ -7,7 +7,7 @@ pip install -e ".[dev]"     # 装 pytest + pytest-cov + ruff
 pytest tests/
 ```
 
-98 个测试，约 2 秒跑完。无网络 / 无外部依赖（Stata / R / LLM 全 mock 或不需要）。
+111 个测试，约数秒跑完。无网络 / 无外部依赖（Stata / R / LLM 全 mock 或不需要）。
 
 ## 覆盖的模块
 
@@ -16,7 +16,9 @@ pytest tests/
 | `tests/test_session.py` | `scripts/session.py` | 27 | session 生命周期：init / list / show / add / add-review / promote |
 | `tests/test_identify_strategy.py` | `scripts/identify_strategy.py` | 30 | 6 个识别策略（DiD / RDD / IV / SCM / Matching / DML）的决策树打分规则 + 报告渲染 |
 | `tests/test_scaffold.py` | `scripts/scaffold.py` | 20 | Stata / R 模板字典完整性 + 模板内容质量（必含 reghdfe / event study / rdrobust 等）+ CLI 端到端 |
-| `tests/test_cli.py` | `scripts/cli.py` | 21 | 子命令分发 / 别名解析 / banner / open_doc + subprocess 端到端 |
+| `tests/test_cli.py` | `scripts/cli.py` | 25 | 子命令分发 / 别名解析 / banner / open_doc + subprocess 端到端 |
+| `tests/test_doctor.py` | `scripts/doctor.py` | 2 | 本地环境 / 关键文件 / 依赖健康检查 |
+| `tests/test_robustness_checks.py` | `scripts/robustness_checks.py` | 7 | Stage 4 静态 verifier / AI 味扫描 / 因果过度声称 / 引用 placeholder / fail-under |
 
 ## 测试分类
 

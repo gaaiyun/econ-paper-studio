@@ -3,13 +3,13 @@
 每个子目录是一个完整的实证案例，包含从研究问题到论文初稿的全流程产出。  
 跑通其中任何一个都能验证 econ-paper-studio 工作流是否正常。
 
-## 案例清单（计划）
+## 案例清单
 
-| 案例 | 方法 | 数据 | 适合学习什么 |
-|---|---|---|---|
-| `case-min-wage-did/` | Staggered DiD (CS-DiD + Sun-Abraham) | CFPS 个人面板 2010-2018 | 错时治疗 + 现代 DiD + HonestDiD 敏感性 |
-| `case-rdd-college/` | Sharp RDD (CCT bandwidth) | 高考分数线断点 | 经典 RDD + bandwidth 选择 + manipulation test |
-| `case-iv-export/` | IV (Bartik shift-share) | 中国出口数据 + 海外需求 | 弱工具变量诊断 + 当代 IV 谨慎做法 |
+| 案例 | 状态 | 方法 | 数据 | 适合学习什么 |
+|---|---|---|---|---|
+| `case-min-wage-did/` | 可跑 smoke | Staggered DiD (CS-DiD + Sun-Abraham) | 城市-年份面板示例 brief | 错时治疗 + 现代 DiD + HonestDiD 敏感性 |
+| `case-rdd-college/` | 规划中 | Sharp RDD (CCT bandwidth) | 高考分数线断点 | 经典 RDD + bandwidth 选择 + manipulation test |
+| `case-iv-export/` | 规划中 | IV (Bartik shift-share) | 中国出口数据 + 海外需求 | 弱工具变量诊断 + 当代 IV 谨慎做法 |
 
 ## 通用约定
 
@@ -46,4 +46,4 @@ case-xxx/
 
 ## 状态
 
-🚧 案例正在编写中。当前 v0.1.0-init 阶段，案例骨架尚未填充。
+当前已提供 `case-min-wage-did/research_brief.yaml`，可直接用于 `identify` smoke test。其余案例仍是后续扩展计划。

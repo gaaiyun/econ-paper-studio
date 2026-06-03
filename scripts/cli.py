@@ -7,6 +7,8 @@ git 风格的子命令分发器：
   econ-studio init <name> --rq "..." --strategy DiD     (= session.py init)
   econ-studio identify --brief brief.yaml               (= identify_strategy.py)
   econ-studio scaffold --strategy DiD --session my-paper (= scaffold.py)
+  econ-studio verify --strategy DiD --analysis outputs/my-paper (= robustness_checks.py)
+  econ-studio doctor                                    (= doctor.py)
   econ-studio session list                              (= session.py list)
   econ-studio brainstorm                                (= 打开 RESEARCH_QUESTION.md)
   econ-studio workflow                                  (= 打开 WORKFLOW.md)
@@ -21,8 +23,10 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 
 SUBCOMMANDS = {
+    'doctor':    SCRIPT_DIR / 'doctor.py',
     'identify':  SCRIPT_DIR / 'identify_strategy.py',
     'scaffold':  SCRIPT_DIR / 'scaffold.py',
+    'verify':    SCRIPT_DIR / 'robustness_checks.py',
     'session':   SCRIPT_DIR / 'session.py',
     # init / add / list 等也通过 session 入口
     'init':      ('session.py', 'init'),
@@ -36,28 +40,34 @@ ALIASES = {
     'i': 'identify', 'identify-strategy': 'identify',
     's': 'session', 'sess': 'session',
     'sc': 'scaffold',
+    'v': 'verify', 'check': 'verify',
+    'd': 'doctor',
     'b': 'brainstorm', 'q': 'brainstorm', 'rq': 'brainstorm',
     'w': 'workflow',
 }
 
 
 def banner() -> None:
-    print('econ-paper-studio — empirical economics workflow CLI')
+    print('econ-paper-studio - empirical economics workflow CLI')
     print('=' * 60)
     print('Stage commands:')
+    print('  doctor         Check local install and project health')
     print('  brainstorm     Open RESEARCH_QUESTION.md (stage 1)')
     print('  identify       Identify strategy (stage 2)')
     print('  scaffold       Generate code skeleton (stage 3)')
+    print('  verify         Run static robustness/writing checks (stage 4)')
     print('  session        Manage paper iterations (stage 5)')
     print()
     print('Session shortcuts:')
     print('  init / list / show / add / promote')
     print()
     print('Examples:')
+    print('  econ-studio doctor --json')
     print('  econ-studio brainstorm')
     print('  econ-studio identify --interactive')
     print('  econ-studio identify --brief brief.yaml')
     print('  econ-studio scaffold --strategy DiD --session my-paper --lang stata')
+    print('  econ-studio verify --strategy DiD --analysis outputs/my-paper')
     print('  econ-studio init my-paper --rq "..." --strategy DiD')
     print('  econ-studio list')
     print('  econ-studio show my-paper')

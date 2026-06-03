@@ -117,7 +117,7 @@ def cmd_init(args) -> int:
     print(f'     changelog: {changelog_path(s_dir)}')
     print()
     print('Next:')
-    print(f'  1. python scripts/identify_strategy.py --interactive')
+    print('  1. python scripts/identify_strategy.py --interactive')
     print(f'  2. python scripts/scaffold.py --strategy <chosen> --session {args.name}')
     print(f'  3. Develop paper draft in {s_dir}/paper/v1/')
     return 0

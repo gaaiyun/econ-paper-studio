@@ -16,7 +16,6 @@ from identify_strategy import (
     render_report,
 )
 
-
 # --- 数据类 ---------------------------------------------------------------
 
 def test_strategy_dataclass_defaults():
@@ -297,7 +296,7 @@ def test_render_report_truncates_long_rationale():
                  rationale=["很长的理由 " * 30])
     text = render_report({}, [s], top_k=1)
     # 表格行不应包含全部 30 次重复
-    table_line = [l for l in text.split("\n") if "DiD" in l and "100" in l][0]
+    table_line = [line for line in text.split("\n") if "DiD" in line and "100" in line][0]
     assert len(table_line) < 400
 
 

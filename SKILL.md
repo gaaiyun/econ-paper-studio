@@ -67,46 +67,45 @@ Outputs `strategy_recommendation.md` with primary method, alternatives, ≥3 lit
 
 ### Stage 3: execute (code scaffolding)
 
-**Tool**: `scripts/scaffold_dofile.py` (generates Stata / R / Python)
+**Tool**: `scripts/scaffold.py` (generates Stata / R code skeletons)
 
 ```bash
-python scripts/scaffold_dofile.py --strategy strategy_recommendation.md --lang stata
+python scripts/scaffold.py --strategy DiD --session my-paper --lang stata
 ```
 
-Outputs `analysis/` with 6 standard files:
-- `01_setup` — data import + descriptive stats
-- `02_descriptive` — balance + summary tables
-- `03_main` — main regression with cluster SE
-- `04_robustness` — parallel trends / placebo / bandwidth tests
-- `05_heterogeneity` — subgroup splits + interaction terms
-- `06_tables_figures` — publication-ready output
+Outputs `outputs/<session>/` with standard subdirectories and Stata/R analysis files:
+- `do/00_master.do` or `R/00_main.R` — ordered execution entry
+- `01_clean` / `02_descriptive` / `03_main` — core empirical workflow
+- `04_robustness` / `05_heterogeneity` / `99_export` — checks and paper outputs
+- `data/`, `tables/`, `figures/`, `robustness/` — replication package structure
 
 ### Stage 4: verify (robustness + audit)
 
 **Tool**: `scripts/robustness_checks.py`
 
 ```bash
-python scripts/robustness_checks.py --analysis analysis/ --output verify_report.md
+python scripts/robustness_checks.py --strategy DiD --analysis outputs/my-paper --output verify_report.md
 ```
 
 Checks:
 - **Critical**: parallel trends (DiD), McCrary density (RDD), weak IV F-stat (IV), cluster SE used, multiple testing correction
 - **High**: placebo, heterogeneity, alternative bandwidth/cluster levels, HonestDiD sensitivity, selection (Heckman/Lee bounds)
-- **Audit**: overstatement detection (excess "causes/leads to"), text-table consistency, citation-source consistency (Semantic Scholar)
+- **Audit**: AI-style filler phrases, obvious citation placeholders, missing references section risk
+
+This verifier is offline-first. It does not prove numerical correctness or source support; use it as a blocking static gate before live Stata/R/Python runs and external citation verification.
 
 ### Stage 5: write (paper writing + R&R)
 
-**Tool**: `scripts/paper_session.py` session manager
+**Tool**: `scripts/session.py` session manager
 
 ```bash
-python scripts/paper_session.py init my-paper --venue CSSCI
-python scripts/paper_session.py add --version v1 --paper draft_v1.docx
-python scripts/paper_session.py verify --paper draft_v1.docx
-python scripts/paper_session.py add-review --version r1 --reviewers "comments.docx"
-python scripts/paper_session.py draft-response --version r1
+python scripts/session.py init my-paper --rq "X causes Y" --strategy DiD --target-journal CSSCI
+python scripts/session.py add my-paper --version v1 --paper draft_v1.docx --note "first draft"
+python scripts/session.py add-review my-paper --version r1 --letter comments.docx --decision major
+python scripts/session.py promote my-paper --version v2
 ```
 
-Maintains `manifest.json` + `CHANGELOG.md` per session. Drafts point-by-point reviewer response. Strips AI-style filler ("It is worth noting", "Furthermore" etc.) using anti-AI phrase blacklist.
+Maintains `manifest.json` + `CHANGELOG.md` per session. Use Stage 4 `verify --paper <draft>` to scan AI-style filler and citation placeholders before recording an iteration score.
 
 ## Things That Must Survive Compilation
 
@@ -140,18 +139,17 @@ If those skills are not installed, this skill still works in "standalone mode" b
 |---|---|
 | `README.md` | Project intro |
 | `PROJECT_PLAN.md` | Full task breakdown |
-| `WORKFLOW.md` | Five-stage workflow detail (TODO) |
-| `RESEARCH_QUESTION.md` | Stage 1 template (TODO) |
-| `INSTALL_CN.md` | Chinese install guide (TODO) |
-| `scripts/identify_strategy.py` | Stage 2 (TODO) |
-| `scripts/scaffold_dofile.py` | Stage 3 (TODO) |
-| `scripts/robustness_checks.py` | Stage 4 (TODO) |
-| `scripts/paper_session.py` | Stage 5 (TODO) |
-| `scripts/cli.py` | Unified `econ-studio` entry (TODO) |
-| `references/` | Methods + protocols + anti-AI phrases (TODO) |
-| `templates/` | Stata / R / Python / paper templates (TODO) |
-| `examples/` | End-to-end case studies (TODO) |
-| `tests/` | pytest (TODO) |
+| `WORKFLOW.md` | Five-stage workflow detail |
+| `RESEARCH_QUESTION.md` | Stage 1 template |
+| `INSTALL_CN.md` | Chinese install guide |
+| `scripts/identify_strategy.py` | Stage 2 strategy selector |
+| `scripts/scaffold.py` | Stage 3 Stata/R scaffold generator |
+| `scripts/robustness_checks.py` | Stage 4 offline static verifier |
+| `scripts/session.py` | Stage 5 paper session manager |
+| `scripts/cli.py` | Unified `econ-studio` entry |
+| `references/` | Methods + anti-AI phrase references |
+| `examples/` | Smoke-test research brief and planned case studies |
+| `tests/` | 107 offline pytest tests |
 
 ## Notes
 
@@ -160,4 +158,4 @@ If those skills are not installed, this skill still works in "standalone mode" b
 - **Optional**: Volcengine ARK_API_KEY for vision-based table verification
 - **Optional**: Semantic Scholar API key for citation validation (free tier OK)
 
-This skill is at version **0.1.0-init** as of 2026-04-19. Most scripts are TODO. See `PROJECT_PLAN.md` for the build sequence.
+This skill is at version **0.1.0**. The offline CLI path is runnable; external citation verification and real Stata/R execution remain explicit user-side/live-tool steps.

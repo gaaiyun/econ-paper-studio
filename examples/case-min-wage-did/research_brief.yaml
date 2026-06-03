@@ -1,0 +1,25 @@
+question: "最低工资调整对青年就业率的因果效应是什么？"
+contribution: >
+  使用城市-年份面板和错时政策调整，比较最低工资变化对青年就业率的影响，
+  并明确区分总体就业与低技能青年就业。
+target_journal: "CSSCI / applied economics field journal"
+data:
+  structure: panel
+  granularity: city
+  sample_size: large
+  time_unit: year
+  unit_id: city_id
+  time_id: year
+  treatment: minimum_wage_increase
+  outcome: youth_employment_rate
+  controls:
+    - gdp_per_capita
+    - industrial_structure
+    - unemployment_rate
+    - education_share
+identification_seed: "DiD"
+natural_experiment: "不同城市最低工资调整时间存在错位，可作为政策冲击。"
+confounders:
+  - "遗漏变量：城市经济周期可能同时影响最低工资调整和就业。"
+  - "反向因果：就业恶化可能影响地方调整最低工资的时点。"
+  - "错时治疗：不能只依赖传统 TWFE。"

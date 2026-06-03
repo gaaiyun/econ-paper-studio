@@ -6,20 +6,17 @@ import sys
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
 from cli import (
     ALIASES,
-    SUBCOMMANDS,
     PROJECT_ROOT,
     SCRIPT_DIR,
+    SUBCOMMANDS,
     banner,
     main,
     open_doc,
 )
-
 
 CLI_PY = SCRIPT_DIR / "cli.py"
 
@@ -35,8 +32,8 @@ def test_project_root_above_scripts():
 
 
 def test_subcommands_dict_keys():
-    expected = {"identify", "scaffold", "session", "init", "list",
-                "show", "add", "promote"}
+    expected = {"doctor", "identify", "scaffold", "session", "init", "list",
+                "show", "add", "promote", "verify"}
     assert expected <= set(SUBCOMMANDS.keys())
 
 
@@ -53,6 +50,14 @@ def test_aliases_resolve_to_real_commands():
     valid_cmds = set(SUBCOMMANDS.keys()) | {"brainstorm", "workflow"}
     for alias, target in ALIASES.items():
         assert target in valid_cmds, f"alias {alias} → {target} 不是 valid 命令"
+
+
+def test_banner_is_ascii_safe_for_windows_console(capsys):
+    banner()
+    out = capsys.readouterr().out
+    assert out.isascii()
+    assert "doctor" in out
+    assert "verify" in out
 
 
 # --- banner / open_doc -------------------------------------------------
@@ -161,6 +166,19 @@ def test_cli_subprocess_scaffold_help():
     assert "strategy" in proc.stdout.lower()
 
 
+def test_cli_subprocess_verify_help():
+    proc = _run_cli(["verify", "--help"])
+    assert proc.returncode == 0
+    assert "analysis" in proc.stdout.lower()
+
+
+def test_cli_subprocess_doctor_json():
+    proc = _run_cli(["doctor", "--json"])
+    assert proc.returncode == 0
+    assert '"checks"' in proc.stdout
+    assert '"python_version"' in proc.stdout
+
+
 def test_cli_subprocess_session_list_in_empty_dir(tmp_path):
     proc = _run_cli(["list"], cwd=tmp_path)
     # session list 在没有 outputs/ 的目录跑应该返回 0 + 提示
@@ -173,3 +191,9 @@ def test_cli_aliases_short_forms(tmp_path):
     proc = _run_cli(["sc", "--help"])
     assert proc.returncode == 0
     assert "strategy" in proc.stdout.lower()
+
+
+def test_cli_verify_alias_short_form():
+    proc = _run_cli(["v", "--help"])
+    assert proc.returncode == 0
+    assert "analysis" in proc.stdout.lower()

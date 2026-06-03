@@ -132,6 +132,14 @@ est store mp1
 *   est store m_trim
 * restore
 
+* 5. 多重检验校正（多个 outcome / subgroup 时必做）
+* 推荐优先报告 Holm 或 Romano-Wolf；简单场景至少报告 Bonferroni。
+* 示例：
+*   * ssc install rwolf
+*   * rwolf y1 y2 y3, indepvar(did) controls(controls*) ///
+*   *     absorb(id year) cluster(id) reps(999)
+*   * Bonferroni adjusted alpha = 0.05 / number_of_outcomes
+
 esttab mp1 using "tables/T3_robustness.rtf", se ar2 replace
 ''',
         '05_heterogeneity.do': '''* ============================================================

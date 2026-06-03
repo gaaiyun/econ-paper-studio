@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "econ-paper-studio"
 version = "0.1.0"
-description = "End-to-end empirical economics research workflow: question → design → execute → verify → publish. Orchestrates StatsPAI + academic-research-skills + Stata reference into a five-stage pipeline. Chinese-friendly, Stata-first."
+description = "End-to-end empirical economics research workflow: question -> design -> execute -> verify -> publish. Orchestrates StatsPAI + academic-research-skills + Stata reference into a five-stage pipeline. Chinese-friendly, Stata-first."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -17,7 +17,7 @@ keywords = [
     "chinese-economics", "agent",
 ]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Education",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
