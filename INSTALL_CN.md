@@ -10,7 +10,7 @@
 cd "G:\github_project_0516\econ-paper-studio"
 ```
 
-项目是一个本地 CLI / Agent Skill 编排层：研究问题 -> 识别策略 -> Stata/R 脚手架 -> 离线质量核验 -> 论文 session 管理。
+项目是一个本地 CLI / Agent Skill 编排层：研究问题 -> 识别策略 -> 数据审计 -> Stata/R 脚手架 -> 离线质量核验 -> 论文写作质检和 session 管理。
 
 ## 2. 安装
 
@@ -62,19 +62,46 @@ python scripts\cli.py scaffold `
   --session min-wage-demo `
   --lang stata
 
+python scripts\cli.py data-audit `
+  --csv examples\case-min-wage-did\panel_sample.csv `
+  --required city_id `
+  --required year `
+  --required minimum_wage_increase `
+  --required youth_employment_rate `
+  --key city_id `
+  --key year `
+  --outcome youth_employment_rate `
+  --treatment minimum_wage_increase `
+  --cluster city_id `
+  --min-clusters 3 `
+  --output outputs\min-wage-demo\data_audit.md `
+  --fail-on-critical
+
 python scripts\cli.py verify `
   --strategy DiD `
   --analysis outputs\min-wage-demo `
+  --paper examples\case-min-wage-did\draft_excerpt.md `
   --output outputs\min-wage-demo\verify_report.md `
   --fail-under 6
+
+python scripts\cli.py paper outline `
+  --brief examples\case-min-wage-did\research_brief.yaml `
+  --output outputs\min-wage-demo\paper_outline.md
+
+python scripts\cli.py paper audit `
+  --paper examples\case-min-wage-did\draft_excerpt.md `
+  --output outputs\min-wage-demo\paper_audit.md `
+  --fail-under 8
 ```
 
 预期结果：
 
 - `outputs\min-wage-demo\manifest.json`：论文 session 元数据
 - `outputs\min-wage-demo\identify_strategy.md`：识别策略推荐
+- `outputs\min-wage-demo\data_audit.md`：示例 CSV 数据结构审计
 - `outputs\min-wage-demo\do\*.do`：Stata 分析骨架
 - `outputs\min-wage-demo\verify_report.md`：离线质量核验报告
+- `outputs\min-wage-demo\paper_outline.md` / `paper_audit.md`：论文大纲和草稿质检报告
 
 `outputs/` 已被 `.gitignore` 忽略，不会误提交。
 
@@ -85,8 +112,10 @@ python scripts\cli.py verify `
 | doctor | `python scripts\cli.py doctor --json` | 检查本地环境和关键文件 |
 | question | `python scripts\cli.py brainstorm` | 打开研究问题模板 |
 | design | `python scripts\cli.py identify --brief <brief.yaml>` | 推荐识别策略 |
+| data-audit | `python scripts\cli.py data-audit --csv <panel.csv> --key id --key year` | 检查重复键、缺失、处理变量变化、结果变量类型和聚类数量 |
 | execute | `python scripts\cli.py scaffold --strategy DiD --session <name> --lang stata` | 生成 Stata/R 骨架 |
 | verify | `python scripts\cli.py verify --strategy DiD --analysis outputs\<name>` | 离线质量闸门 |
+| paper | `python scripts\cli.py paper outline/audit` | 生成论文大纲或审计草稿结构、引用风险、AI 味和图表标题 |
 | write | `python scripts\cli.py init/list/show/add/add-review/promote` | 管理论文版本 |
 
 短别名：
@@ -96,7 +125,9 @@ python scripts\cli.py b          # brainstorm
 python scripts\cli.py d --json   # doctor
 python scripts\cli.py i --help   # identify
 python scripts\cli.py sc --help  # scaffold
+python scripts\cli.py da --help  # data-audit
 python scripts\cli.py v --help   # verify
+python scripts\cli.py p --help   # paper
 ```
 
 ## 5. 可选配置
@@ -160,7 +191,7 @@ cmd /c rmdir "%USERPROFILE%\.cursor\skills\econ-paper-studio"
 ```powershell
 python -m pytest tests/ -p no:cacheprovider
 python -m ruff check scripts tests
-python -m py_compile scripts\cli.py scripts\doctor.py scripts\identify_strategy.py scripts\scaffold.py scripts\session.py scripts\robustness_checks.py
+python -m py_compile scripts\cli.py scripts\doctor.py scripts\identify_strategy.py scripts\scaffold.py scripts\session.py scripts\robustness_checks.py scripts\data_audit.py scripts\paper_pipeline.py
 ```
 
 当前测试全部离线运行，不需要 Stata、R、LLM API key 或网络。
@@ -190,9 +221,13 @@ python scripts\cli.py --help
 chcp 65001
 ```
 
-### `verify` 得分不高
+### `data-audit` 有 critical failure
 
-这不是报错，而是质量闸门在提示缺口。按 `Next Actions` 补齐平行趋势、安慰剂、多重检验校正、引用或写作问题，再重新运行。
+先处理重复键、缺失、处理变量不变化或结果变量不是数值这类问题。它们通常会导致分母错位、join explosion 或无法识别。
+
+### `verify` 或 `paper audit` 得分不高
+
+这不是报错，而是质量闸门在提示缺口。按 `Next Actions` 补齐平行趋势、安慰剂、多重检验校正、引用、贡献句、图表标题或写作问题，再重新运行。
 
 ### `git status` 看到 `outputs/`
 

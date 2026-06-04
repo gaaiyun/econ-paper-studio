@@ -20,6 +20,8 @@ def test_run_checks_reports_required_project_files():
     assert result["project_root"].endswith("econ-paper-studio")
     assert checks["file.README.md"]["passed"]
     assert checks["file.scripts/cli.py"]["passed"]
+    assert checks["file.scripts/data_audit.py"]["passed"]
+    assert checks["file.scripts/paper_pipeline.py"]["passed"]
     assert checks["file.scripts/robustness_checks.py"]["passed"]
 
 

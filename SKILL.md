@@ -1,6 +1,6 @@
 ---
 name: econ-paper-studio
-description: End-to-end empirical economics research workflow — from research question clarification through identification strategy selection, Stata/R/Python code generation, robustness checks, to paper drafting and R&R response. Use this skill when the user is doing causal inference research (DiD, RDD, IV, SCM, PSM, DML), writing an empirical paper for SSCI/CSSCI journals, or responding to reviewer comments. The skill orchestrates upstream tools (StatsPAI for execution, Imbad0202/academic-research-skills for paper writing, sshtomar social-science skills for methodology, dylantmoore/stata-skill for Stata) into a five-stage workflow with optional Chinese-language output and Chinese journal templates.
+description: End-to-end empirical economics research workflow — from research question clarification through identification strategy selection, data audit, Stata/R/Python code scaffolding, robustness checks, paper quality audit, and R&R tracking. Use this skill when the user is doing causal inference research (DiD, RDD, IV, SCM, PSM, DML), writing an empirical paper for SSCI/CSSCI journals, or responding to reviewer comments. The skill orchestrates econometric, data-validation, writing, plotting, and verification disciplines into a local workflow with optional Chinese-language output.
 ---
 
 # Econ Paper Studio
@@ -65,15 +65,22 @@ python scripts/identify_strategy.py --brief research_brief.yaml
 
 Outputs `strategy_recommendation.md` with primary method, alternatives, ≥3 literature benchmarks, robustness checklist, and StatsPAI function call preview.
 
-### Stage 3: execute (code scaffolding)
+### Stage 3: data-audit + execute
 
-**Tool**: `scripts/scaffold.py` (generates Stata / R code skeletons)
+**Tool**: `scripts/data_audit.py` first, then `scripts/scaffold.py`.
 
 ```bash
+python scripts/data_audit.py --csv data/analysis_panel.csv \
+  --key unit_id --key year \
+  --outcome outcome \
+  --treatment treatment \
+  --cluster unit_id \
+  --fail-on-critical
+
 python scripts/scaffold.py --strategy DiD --session my-paper --lang stata
 ```
 
-Outputs `outputs/<session>/` with standard subdirectories and Stata/R analysis files:
+`data_audit.py` checks duplicate keys, missingness, treatment variation, numeric outcome, and cluster count before estimation. `scaffold.py` outputs `outputs/<session>/` with standard subdirectories and Stata/R analysis files:
 - `do/00_master.do` or `R/00_main.R` — ordered execution entry
 - `01_clean` / `02_descriptive` / `03_main` — core empirical workflow
 - `04_robustness` / `05_heterogeneity` / `99_export` — checks and paper outputs
@@ -94,18 +101,20 @@ Checks:
 
 This verifier is offline-first. It does not prove numerical correctness or source support; use it as a blocking static gate before live Stata/R/Python runs and external citation verification.
 
-### Stage 5: write (paper writing + R&R)
+### Stage 5: paper/write (outline, audit, session)
 
-**Tool**: `scripts/session.py` session manager
+**Tool**: `scripts/paper_pipeline.py` for outline/audit and `scripts/session.py` for version history.
 
 ```bash
+python scripts/paper_pipeline.py outline --brief research_brief.yaml --output paper_outline.md
+python scripts/paper_pipeline.py audit --paper draft.md --output paper_audit.md --fail-under 8
 python scripts/session.py init my-paper --rq "X causes Y" --strategy DiD --target-journal CSSCI
 python scripts/session.py add my-paper --version v1 --paper draft_v1.docx --note "first draft"
 python scripts/session.py add-review my-paper --version r1 --letter comments.docx --decision major
 python scripts/session.py promote my-paper --version v2
 ```
 
-Maintains `manifest.json` + `CHANGELOG.md` per session. Use Stage 4 `verify --paper <draft>` to scan AI-style filler and citation placeholders before recording an iteration score.
+`paper_pipeline.py` checks core sections, explicit contribution, obvious citation placeholders, causal overclaim risk, filler phrases, and figure/table caption quality. It does not verify that a citation exists or supports a claim. `session.py` maintains `manifest.json` + `CHANGELOG.md` per session.
 
 ## Things That Must Survive Compilation
 
@@ -127,9 +136,11 @@ This skill is an **orchestrator**. It calls into:
 | `StatsPAI` (pip) | Stage 3 + 4 | All causal inference methods |
 | `obra/superpowers` (skill) | All stages | brainstorming + verification-before-completion + dispatching-parallel-agents |
 | `Imbad0202/academic-research-skills` (skill) | Stage 5 | academic-paper writer + reviewer |
+| `data:validate-data` style checks | Stage 3 | duplicate keys, missingness, join explosion, cluster count |
+| `content-research-writer` / humanizer style checks | Stage 5 | contribution sentence, concrete prose, no placeholder citations |
+| academic plotting guidance | Stage 5 | figure/table captions, uncertainty display, reviewer readability |
 | `sshtomar/claude-code-skills-social-science` (skill) | Stage 2 + 4 | DID skill + regression-diagnostics |
 | `dylantmoore/stata-skill` (skill) | Stage 3 | Stata reference (37 core + 20 packages) |
-| `K-Dense-AI/claude-scientific-skills` (skill) | Stage 3 + 4 | statistical-analysis (test selection, APA reporting) |
 
 If those skills are not installed, this skill still works in "standalone mode" but with reduced quality. Prompt the user to install them via `INSTALL_CN.md` instructions.
 
@@ -143,13 +154,15 @@ If those skills are not installed, this skill still works in "standalone mode" b
 | `RESEARCH_QUESTION.md` | Stage 1 template |
 | `INSTALL_CN.md` | Chinese install guide |
 | `scripts/identify_strategy.py` | Stage 2 strategy selector |
+| `scripts/data_audit.py` | Stage 3 data validation gate |
 | `scripts/scaffold.py` | Stage 3 Stata/R scaffold generator |
 | `scripts/robustness_checks.py` | Stage 4 offline static verifier |
+| `scripts/paper_pipeline.py` | Stage 5 paper outline and writing-quality audit |
 | `scripts/session.py` | Stage 5 paper session manager |
 | `scripts/cli.py` | Unified `econ-studio` entry |
 | `references/` | Methods + anti-AI phrase references |
 | `examples/` | Smoke-test research brief and planned case studies |
-| `tests/` | 107 offline pytest tests |
+| `tests/` | 124 offline pytest tests |
 
 ## Notes
 
@@ -158,4 +171,4 @@ If those skills are not installed, this skill still works in "standalone mode" b
 - **Optional**: Volcengine ARK_API_KEY for vision-based table verification
 - **Optional**: Semantic Scholar API key for citation validation (free tier OK)
 
-This skill is at version **0.1.0**. The offline CLI path is runnable; external citation verification and real Stata/R execution remain explicit user-side/live-tool steps.
+This skill is at version **0.2.0**. The offline CLI path is runnable; external citation verification and real Stata/R execution remain explicit user-side/live-tool steps.

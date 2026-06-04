@@ -7,7 +7,7 @@
 
 | 案例 | 状态 | 方法 | 数据 | 适合学习什么 |
 |---|---|---|---|---|
-| `case-min-wage-did/` | 可跑 smoke | Staggered DiD (CS-DiD + Sun-Abraham) | 城市-年份面板示例 brief | 错时治疗 + 现代 DiD + HonestDiD 敏感性 |
+| `case-min-wage-did/` | 可跑 smoke | Staggered DiD (CS-DiD + Sun-Abraham) | brief + toy CSV + draft excerpt | 错时治疗 + 数据审计 + 现代 DiD + 草稿质检 |
 | `case-rdd-college/` | 规划中 | Sharp RDD (CCT bandwidth) | 高考分数线断点 | 经典 RDD + bandwidth 选择 + manipulation test |
 | `case-iv-export/` | 规划中 | IV (Bartik shift-share) | 中国出口数据 + 海外需求 | 弱工具变量诊断 + 当代 IV 谨慎做法 |
 
@@ -46,4 +46,4 @@ case-xxx/
 
 ## 状态
 
-当前已提供 `case-min-wage-did/research_brief.yaml`，可直接用于 `identify` smoke test。其余案例仍是后续扩展计划。
+当前已提供 `case-min-wage-did/research_brief.yaml`、`panel_sample.csv` 和 `draft_excerpt.md`，可直接用于 `identify -> data-audit -> scaffold -> verify -> paper audit` smoke test。其余案例仍是后续扩展计划。

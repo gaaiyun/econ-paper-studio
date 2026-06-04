@@ -320,11 +320,17 @@ def scan_citation_risks(paper_files: list[Path]) -> list[CheckResult]:
         r"\?\?",
     ]
     placeholder = _match_any(text, placeholder_patterns)
-    has_references = re.search(r"(?im)^\s*(references|bibliography|参考文献)\s*$", text) is not None
+    has_references = re.search(r"(?im)^\s*(?:#+\s*)?(references|bibliography|参考文献)\s*$", text) is not None
     has_author_year = (
         re.search(r"\([A-Z][A-Za-z'&.\-\s]+,\s*(?:19|20)\d{2}[a-z]?\)", text) is not None
         or placeholder is not None
     )
+    if has_references:
+        references_evidence = "References section found."
+    elif has_author_year:
+        references_evidence = "Author-year citations found but no references section."
+    else:
+        references_evidence = "No author-year citations detected in scanned draft."
 
     checks = [
         CheckResult(
@@ -340,7 +346,7 @@ def scan_citation_risks(paper_files: list[Path]) -> list[CheckResult]:
             title="References section present",
             severity="medium",
             passed=has_references or not has_author_year,
-            evidence="References section found." if has_references else "Author-year citations found but no references section.",
+            evidence=references_evidence,
             recommendation="Keep a complete references section or BibTeX file with the draft.",
         ),
     ]

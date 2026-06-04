@@ -7,7 +7,7 @@ pip install -e ".[dev]"     # 装 pytest + pytest-cov + ruff
 pytest tests/
 ```
 
-111 个测试，约数秒跑完。无网络 / 无外部依赖（Stata / R / LLM 全 mock 或不需要）。
+124 个测试，约数秒跑完。无网络 / 无外部依赖（Stata / R / LLM 全 mock 或不需要）。
 
 ## 覆盖的模块
 
@@ -16,9 +16,11 @@ pytest tests/
 | `tests/test_session.py` | `scripts/session.py` | 27 | session 生命周期：init / list / show / add / add-review / promote |
 | `tests/test_identify_strategy.py` | `scripts/identify_strategy.py` | 30 | 6 个识别策略（DiD / RDD / IV / SCM / Matching / DML）的决策树打分规则 + 报告渲染 |
 | `tests/test_scaffold.py` | `scripts/scaffold.py` | 20 | Stata / R 模板字典完整性 + 模板内容质量（必含 reghdfe / event study / rdrobust 等）+ CLI 端到端 |
-| `tests/test_cli.py` | `scripts/cli.py` | 25 | 子命令分发 / 别名解析 / banner / open_doc + subprocess 端到端 |
+| `tests/test_cli.py` | `scripts/cli.py` | 27 | 子命令分发 / 别名解析 / banner / open_doc + subprocess 端到端 |
 | `tests/test_doctor.py` | `scripts/doctor.py` | 2 | 本地环境 / 关键文件 / 依赖健康检查 |
-| `tests/test_robustness_checks.py` | `scripts/robustness_checks.py` | 7 | Stage 4 静态 verifier / AI 味扫描 / 因果过度声称 / 引用 placeholder / fail-under |
+| `tests/test_data_audit.py` | `scripts/data_audit.py` | 4 | CSV / DataFrame 数据结构审计：重复键、聚类数量、缺失、CLI JSON/fail-on-critical |
+| `tests/test_robustness_checks.py` | `scripts/robustness_checks.py` | 8 | Stage 4 静态 verifier / AI 味扫描 / 因果过度声称 / 引用 placeholder / References 标题识别 / fail-under |
+| `tests/test_paper_pipeline.py` | `scripts/paper_pipeline.py` | 6 | paper outline / paper audit / 引用占位 / AI 味 / 因果过度声称 / 图表标题 |
 
 ## 测试分类
 
@@ -66,6 +68,12 @@ def test_did_panel_data_scored_higher():
 `tmp_path/test-paper/do/` 下生成全部 7 个 `.do` 文件，并验证 `00_master.do`
 包含 session 名替换。
 
+`tests/test_data_audit.py::test_data_audit_cli_outputs_json_and_fail_on_critical`
+会构造重复 unit-time key，验证 CLI 在 critical data risk 下返回 2。
+
+`tests/test_paper_pipeline.py::test_paper_pipeline_cli_audit_json_is_parseable`
+会构造引用占位符草稿，验证 paper audit 的 JSON 输出和 fail-under 行为。
+
 ## 实跑捕获的 bug（v1 修复）
 
 | Bug | 位置 | 表现 | 修法 |
@@ -81,6 +89,7 @@ def test_did_panel_data_scored_higher():
 - 不需要 LLM API key
 - 用 `tmp_path` fixture 隔离文件 IO
 - 用 `monkeypatch` / `patch.object(sys, "argv", ...)` 切 CLI 入参
+- `data-audit` 和 `paper audit` 使用本地 fixture，不触发外部引用核验
 
 GitHub Actions 配置参考：
 

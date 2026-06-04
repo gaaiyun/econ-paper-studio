@@ -63,6 +63,22 @@ def test_citation_scan_flags_placeholders_and_missing_references(tmp_path):
     assert not by_id["citation.references_section"].passed
 
 
+def test_citation_scan_accepts_markdown_references_heading(tmp_path):
+    paper = tmp_path / "draft.md"
+    paper.write_text(
+        "Prior evidence is mixed (Card & Krueger, 1994).\n\n"
+        "## References\n\n"
+        "Card, D., and Krueger, A. 1994. Minimum Wages and Employment.\n",
+        encoding="utf-8",
+    )
+
+    checks = scan_citation_risks([paper])
+    by_id = {item.id: item for item in checks}
+
+    assert by_id["citation.references_section"].passed
+    assert "References section found" in by_id["citation.references_section"].evidence
+
+
 def test_causal_overclaim_scan_flags_strong_claim_without_qualification(tmp_path):
     paper = tmp_path / "draft.md"
     paper.write_text(

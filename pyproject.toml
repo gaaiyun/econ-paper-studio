@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "econ-paper-studio"
-version = "0.1.0"
-description = "End-to-end empirical economics research workflow: question -> design -> execute -> verify -> publish. Orchestrates StatsPAI + academic-research-skills + Stata reference into a five-stage pipeline. Chinese-friendly, Stata-first."
+version = "0.2.0"
+description = "Local empirical economics research workflow: question -> design -> data audit -> scaffold -> verify -> paper quality audit -> session. Chinese-friendly, Stata-first."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -13,7 +13,8 @@ authors = [{ name = "Econ Paper Studio Contributors" }]
 keywords = [
     "econometrics", "causal-inference", "empirical-research",
     "stata", "did", "rdd", "iv", "scm", "dml",
-    "academic-writing", "claude-skill", "cursor-skill",
+    "academic-writing", "data-validation", "paper-audit",
+    "claude-skill", "cursor-skill",
     "chinese-economics", "agent",
 ]
 classifiers = [

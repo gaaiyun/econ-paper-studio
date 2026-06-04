@@ -7,7 +7,9 @@ git 风格的子命令分发器：
   econ-studio init <name> --rq "..." --strategy DiD     (= session.py init)
   econ-studio identify --brief brief.yaml               (= identify_strategy.py)
   econ-studio scaffold --strategy DiD --session my-paper (= scaffold.py)
+  econ-studio data-audit --csv panel.csv                (= data_audit.py)
   econ-studio verify --strategy DiD --analysis outputs/my-paper (= robustness_checks.py)
+  econ-studio paper audit --paper draft.md              (= paper_pipeline.py)
   econ-studio doctor                                    (= doctor.py)
   econ-studio session list                              (= session.py list)
   econ-studio brainstorm                                (= 打开 RESEARCH_QUESTION.md)
@@ -26,7 +28,9 @@ SUBCOMMANDS = {
     'doctor':    SCRIPT_DIR / 'doctor.py',
     'identify':  SCRIPT_DIR / 'identify_strategy.py',
     'scaffold':  SCRIPT_DIR / 'scaffold.py',
+    'data-audit': SCRIPT_DIR / 'data_audit.py',
     'verify':    SCRIPT_DIR / 'robustness_checks.py',
+    'paper':     SCRIPT_DIR / 'paper_pipeline.py',
     'session':   SCRIPT_DIR / 'session.py',
     # init / add / list 等也通过 session 入口
     'init':      ('session.py', 'init'),
@@ -40,7 +44,9 @@ ALIASES = {
     'i': 'identify', 'identify-strategy': 'identify',
     's': 'session', 'sess': 'session',
     'sc': 'scaffold',
+    'da': 'data-audit', 'data': 'data-audit', 'audit-data': 'data-audit',
     'v': 'verify', 'check': 'verify',
+    'p': 'paper', 'write': 'paper',
     'd': 'doctor',
     'b': 'brainstorm', 'q': 'brainstorm', 'rq': 'brainstorm',
     'w': 'workflow',
@@ -55,8 +61,10 @@ def banner() -> None:
     print('  brainstorm     Open RESEARCH_QUESTION.md (stage 1)')
     print('  identify       Identify strategy (stage 2)')
     print('  scaffold       Generate code skeleton (stage 3)')
+    print('  data-audit     Audit CSV keys, missingness, treatment variation, and clusters')
     print('  verify         Run static robustness/writing checks (stage 4)')
-    print('  session        Manage paper iterations (stage 5)')
+    print('  paper          Render outline or audit draft writing quality (stage 5)')
+    print('  session        Manage paper iterations and review history')
     print()
     print('Session shortcuts:')
     print('  init / list / show / add / promote')
@@ -67,7 +75,10 @@ def banner() -> None:
     print('  econ-studio identify --interactive')
     print('  econ-studio identify --brief brief.yaml')
     print('  econ-studio scaffold --strategy DiD --session my-paper --lang stata')
+    print('  econ-studio data-audit --csv panel.csv --key city_id --key year --outcome y')
     print('  econ-studio verify --strategy DiD --analysis outputs/my-paper')
+    print('  econ-studio paper outline --brief brief.yaml --output outline.md')
+    print('  econ-studio paper audit --paper draft.md --fail-under 8')
     print('  econ-studio init my-paper --rq "..." --strategy DiD')
     print('  econ-studio list')
     print('  econ-studio show my-paper')

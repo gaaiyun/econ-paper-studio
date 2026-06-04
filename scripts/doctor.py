@@ -20,9 +20,15 @@ REQUIRED_FILES = [
     "scripts/cli.py",
     "scripts/identify_strategy.py",
     "scripts/scaffold.py",
+    "scripts/data_audit.py",
     "scripts/robustness_checks.py",
+    "scripts/paper_pipeline.py",
     "scripts/session.py",
+    "references/data_validation_protocol.md",
+    "references/writing_quality_protocol.md",
     "examples/case-min-wage-did/research_brief.yaml",
+    "examples/case-min-wage-did/panel_sample.csv",
+    "examples/case-min-wage-did/draft_excerpt.md",
 ]
 
 REQUIRED_IMPORTS = ["yaml"]

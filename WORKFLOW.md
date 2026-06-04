@@ -6,6 +6,8 @@
 question → design → execute → verify → write
 ```
 
+其中 `data-audit` 是 execute 前的硬闸门：先检查分析样本结构，再让 Stata/R/Python 跑模型。
+
 ---
 
 ## 总体设计哲学
@@ -165,6 +167,13 @@ python scripts/identify_strategy.py --brief outputs/<session>/research_brief.yam
 **用什么**：
 
 ```bash
+python scripts/data_audit.py --csv data/analysis_panel.csv \
+  --key city_id --key year \
+  --outcome youth_employment_rate \
+  --treatment minimum_wage_increase \
+  --cluster city_id \
+  --fail-on-critical
+
 python scripts/scaffold.py --strategy DiD --session my-mw-study
 ```
 
@@ -187,6 +196,7 @@ outputs/my-mw-study/
 ```
 
 **核心设计**：
+- **先审数据结构**：检查重复键、缺失、处理变量变化、结果变量类型和聚类数量
 - **Stata 做你熟的**：reghdfe + estout（有传统的论文表样式）
 - **R 做 Stata 不擅长的**：现代 DiD 估计器、HonestDiD、ggplot 出版级图
 - **00_master 文件**：保证从原始数据到 final tables/figures 一行命令复现
@@ -195,7 +205,7 @@ outputs/my-mw-study/
 
 ### Stage 3 产出
 
-`outputs/<session>/tables/` + `outputs/<session>/figures/` + 每个脚本顶部的 docstring 说明它在做什么。
+`data_audit.md` + `outputs/<session>/tables/` + `outputs/<session>/figures/` + 每个脚本顶部的 docstring 说明它在做什么。
 
 ---
 
@@ -248,7 +258,18 @@ python scripts/robustness_checks.py \
 
 **何时跳过**：只是内部分析报告，不是论文。
 
-**用什么**：所有写作工作 delegate 给 `econ-write` skill。
+**用什么**：`scripts/paper_pipeline.py` 生成大纲和审计草稿，`scripts/session.py` 记录版本和审稿意见。
+
+```bash
+python scripts/paper_pipeline.py outline \
+  --brief examples/case-min-wage-did/research_brief.yaml \
+  --output outputs/my-mw-study/paper_outline.md
+
+python scripts/paper_pipeline.py audit \
+  --paper paper/draft.md \
+  --output outputs/my-mw-study/paper_audit.md \
+  --fail-under 8
+```
 
 **关键编排顺序**（这是 Cochrane 等的反复强调）：
 
@@ -264,6 +285,8 @@ python scripts/robustness_checks.py \
 
 ```
 outputs/<session>/paper/
+├── paper_outline.md
+├── paper_audit.md
 ├── v1/
 │   ├── main.tex
 │   ├── tables.tex
@@ -282,6 +305,10 @@ python scripts/session.py add-review my-mw-study \
 ```
 
 当前版本先把审稿意见登记进 session manifest 和 `CHANGELOG.md`。点对点 response 生成属于后续路线图；不要在当前版本中假装已经自动生成了修改位置。
+
+### 写作质检边界
+
+`paper audit` 会检查核心章节、贡献句、引用占位符、AI 味填充语、因果过度声称和图表标题。它不会证明引用真实，也不会证明文献支持具体 claim。真实引用必须继续通过 DOI、期刊官网、Crossref/OpenAlex/Semantic Scholar 或人工阅读核验。
 
 ---
 
@@ -339,6 +366,10 @@ python scripts/identify_strategy.py --brief examples/case-min-wage-did/research_
   --output outputs/my-mw-study/identify_strategy.md
 
 # Stage 3: 生成代码骨架
+python scripts/data_audit.py --csv examples/case-min-wage-did/panel_sample.csv \
+  --key city_id --key year --outcome youth_employment_rate \
+  --treatment minimum_wage_increase --cluster city_id --min-clusters 3
+
 python scripts/scaffold.py --strategy DiD --session my-mw-study
 
 # Stage 4: 离线质量核验
@@ -346,6 +377,15 @@ python scripts/robustness_checks.py \
   --strategy DiD \
   --analysis outputs/my-mw-study \
   --output outputs/my-mw-study/verify_report.md
+
+# Stage 5: 写作大纲和草稿审计
+python scripts/paper_pipeline.py outline \
+  --brief examples/case-min-wage-did/research_brief.yaml \
+  --output outputs/my-mw-study/paper_outline.md
+
+python scripts/paper_pipeline.py audit \
+  --paper examples/case-min-wage-did/draft_excerpt.md \
+  --output outputs/my-mw-study/paper_audit.md
 
 # 看历史
 python scripts/session.py show my-mw-study
@@ -356,7 +396,9 @@ python scripts/session.py show my-mw-study
 ```bash
 econ-studio init my-mw-study --rq "..." --strategy DiD
 econ-studio identify --brief examples/case-min-wage-did/research_brief.yaml
+econ-studio data-audit --csv examples/case-min-wage-did/panel_sample.csv --key city_id --key year
 econ-studio scaffold --strategy DiD --session my-mw-study
 econ-studio verify --strategy DiD --analysis outputs/my-mw-study
+econ-studio paper audit --paper examples/case-min-wage-did/draft_excerpt.md
 econ-studio add-review my-mw-study --version r1 --letter letter.pdf --decision major
 ```

@@ -1,23 +1,25 @@
 # Econ Paper Studio
 
-面向实证经济学论文的本地工作流 CLI / Agent Skill。它不替研究者“自动写论文”，而是把一篇经验研究拆成可检查、可跳过、可复现的五个阶段：
+面向实证经济学论文的本地 CLI / Agent Skill。它把一篇经验研究拆成可检查的阶段：研究问题、识别策略、数据审计、代码骨架、稳健性核验、论文写作质检和版本记录。
+
+它不替研究者编造结果、引用或结论。它做的是把 agent 容易跳过的步骤固定下来：先说明问题和识别假设，再检查数据结构，再生成可复现代码，再核验方法证据和论文文本。
 
 ```text
-question -> design -> execute -> verify -> write
+question -> design -> data-audit -> execute -> verify -> paper -> session
 ```
-
-定位很简单：把 StatsPAI 的计量执行、Academic Research Skills 的论文流程、Stata skill 的语法/包参考、social-science skills 的方法硬约束，编排成一个中文友好、Stata-first、离线可跑的研究助手。
 
 ## 当前可用
 
 | 阶段 | 命令 | 当前能力 |
 |---|---|---|
-| doctor | `python scripts\cli.py doctor --json` | 自检 Python 版本、关键文件、核心依赖和可选依赖 |
-| question | `python scripts\cli.py brainstorm` | 打开研究问题五问模板 |
-| design | `python scripts\cli.py identify --brief <brief.yaml>` | 根据 brief 推荐 DiD/RDD/IV/SCM/Matching/DML，并输出文献基准与稳健性清单 |
-| execute | `python scripts\cli.py scaffold --strategy DiD --session <name> --lang stata` | 生成 Stata/R 分析骨架、表图目录和可复现 session 结构 |
-| verify | `python scripts\cli.py verify --strategy DiD --analysis outputs\<name> --paper draft.md` | 离线扫描方法稳健性证据、AI 味短语、引用占位符和因果过度声称 |
-| write | `python scripts\cli.py init/list/show/add/add-review/promote` | 管理论文版本、审稿意见和终稿标记 |
+| doctor | `econ-studio doctor --json` | 检查 Python 版本、关键文件、核心依赖和可选依赖 |
+| question | `econ-studio brainstorm` | 打开研究问题五问模板 |
+| design | `econ-studio identify --brief <brief.yaml>` | 根据 brief 推荐 DiD/RDD/IV/SCM/Matching/DML，并给出识别威胁和稳健性清单 |
+| data-audit | `econ-studio data-audit --csv <panel.csv> --key id --key year` | 检查空样本、重复键、缺失、处理变量变化、结果变量类型和聚类数量 |
+| execute | `econ-studio scaffold --strategy DiD --session <name> --lang stata` | 生成 Stata/R 分析骨架、表图目录和 replication-package 结构 |
+| verify | `econ-studio verify --strategy DiD --analysis outputs\<name> --paper draft.md` | 离线扫描方法稳健性证据、AI 味短语、引用占位符和因果过度声称 |
+| paper | `econ-studio paper outline/audit` | 从 brief 生成论文大纲，或审计草稿结构、贡献句、引用风险和图表标题 |
+| session | `econ-studio init/list/show/add/add-review/promote` | 管理论文版本、审稿意见和终稿标记 |
 
 ## 快速试用
 
@@ -26,77 +28,95 @@ PowerShell 下直接跑：
 ```powershell
 python -m pip install -e ".[dev]"
 
-python scripts\cli.py doctor --json
+econ-studio doctor --json
 
-python scripts\cli.py init min-wage-demo `
-  --rq "最低工资调整对青年就业率的因果效应" `
-  --strategy unsure `
-  --target-journal CSSCI `
-  --data-source "城市-年份面板"
-
-python scripts\cli.py identify `
+econ-studio identify `
   --brief examples\case-min-wage-did\research_brief.yaml `
   --output outputs\min-wage-demo\identify_strategy.md
 
-python scripts\cli.py scaffold `
+econ-studio data-audit `
+  --csv examples\case-min-wage-did\panel_sample.csv `
+  --required city_id `
+  --required year `
+  --required minimum_wage_increase `
+  --required youth_employment_rate `
+  --key city_id `
+  --key year `
+  --outcome youth_employment_rate `
+  --treatment minimum_wage_increase `
+  --cluster city_id `
+  --min-clusters 3 `
+  --output outputs\min-wage-demo\data_audit.md `
+  --fail-on-critical
+
+econ-studio scaffold `
   --strategy DiD `
   --session min-wage-demo `
   --lang stata
 
-python scripts\cli.py verify `
+econ-studio verify `
   --strategy DiD `
   --analysis outputs\min-wage-demo `
+  --paper examples\case-min-wage-did\draft_excerpt.md `
   --output outputs\min-wage-demo\verify_report.md `
   --fail-under 6
+
+econ-studio paper outline `
+  --brief examples\case-min-wage-did\research_brief.yaml `
+  --output outputs\min-wage-demo\paper_outline.md
+
+econ-studio paper audit `
+  --paper examples\case-min-wage-did\draft_excerpt.md `
+  --output outputs\min-wage-demo\paper_audit.md `
+  --fail-under 8
 ```
 
-如果安装了 package entry point，也可以把 `python scripts\cli.py` 换成 `econ-studio`。
+如果没有安装 entry point，可以把 `econ-studio` 换成 `python scripts\cli.py`。
 
 ## 设计取舍
 
-本项目不重造这些上游能力：
-
-| 上游 | 这里怎么用 |
+| 原则 | 落地方式 |
 |---|---|
-| `brycewang-stanford/StatsPAI` | 作为计量执行和函数对照层；本仓库只生成可落地调用和检查清单 |
-| `Imbad0202/academic-research-skills` | 借鉴 research -> write -> review -> revise -> finalize 流程，尤其 integrity gate |
-| `obra/superpowers` | 借鉴设计、TDD、验证先行的工程纪律 |
-| `dylantmoore/stata-skill` | 借鉴 Stata idiom 和社区包参考，脚手架默认 Stata-first |
-| `sshtomar/claude-code-skills-social-science` | 借鉴“方法要求必须有证据”的约束方式，如 DiD 必查平行趋势 |
+| 不编造引用 | 只做 placeholder 和 References 风险扫描；真实引用需要 DOI、期刊页、Crossref/OpenAlex/Semantic Scholar 或人工核验 |
+| 不把静态检查当实证结果 | `verify` 和 `paper audit` 只看文本证据；真实估计仍要在 Stata/R/Python 中运行 |
+| 数据先过结构闸门 | `data-audit` 先查重复键、缺失、处理变量变化和聚类数量，降低 join explosion 和分母错位风险 |
+| 方法和写作分开 | `identify/scaffold/verify` 管识别与代码，`paper outline/audit` 管论文结构、贡献句、引用和图表标题 |
+| 离线优先 | 无 Stata、R、API key、网络时仍能跑完整 smoke path |
 
-本仓库做的是 adapter + 编排层：把研究问题、识别策略、代码骨架、稳健性证据、论文版本放在一个本地 session 里。
+## 上游参考
 
-## Stage 4 verifier 的边界
+本仓库是 adapter + 编排层，不复制上游仓库。核心参考包括：
 
-`verify` 是离线静态检查器。它会扫描 `.do` / `.R` / `.py` / `.md` / `.tex` 等文本文件，检查是否有：
+| 上游 | 这里怎么吸收 |
+|---|---|
+| StatsPAI | 作为计量执行和函数对照层；本仓库先生成可落地调用和检查清单 |
+| Academic Research Skills | 借鉴 research -> write -> review -> revise -> finalize 的论文流程 |
+| obra/superpowers | 借鉴计划、TDD、debugging、verification-before-completion 的工程纪律 |
+| Stata skill | 借鉴 Stata idiom 和社区包参考，脚手架默认 Stata-first |
+| social-science methods skills | 把 DiD/RDD/IV 等方法要求转成可检查的证据项 |
+| research-writing / humanizer / academic-plotting skills | 固化为写作质检、去填充语、引用边界、图表标题和 reviewer-readiness 规则 |
 
-- DiD: cluster SE、平行趋势/event study、现代错时 DiD 替代、安慰剂、多重检验校正
-- RDD: `rdrobust`、密度/操纵检验、bandwidth、placebo cutoff、donut RD
-- IV: first-stage/weak-IV、排除限制、over-id、弱工具稳健区间
-- 写作: 常见 AI 味填充短语
-- 写作: 因果过度声称，例如未限定的 `robustly demonstrates a causal effect`
-- 引用: 明显 placeholder、缺 References/Bibliography 的风险
+## 质量闸门边界
 
-它不会声称“证明引用真实”或“证明结果正确”。真实引用仍需要 Crossref/OpenAlex/Semantic Scholar 或人工核验；数值结果仍需要在 Stata/R/Python 中实际运行。
+`data-audit`、`verify`、`paper audit` 会帮助发现明显缺口，但不会声称：
+
+- 数据来源真实且无测量误差；
+- 回归结果已经正确执行；
+- 引用一定存在且支持文中 claim；
+- 因果识别已经被证明。
+
+它们的作用是把问题提前暴露出来，方便研究者或 agent 继续补 Stata/R/Python 运行、外部引用核验和人工判断。
 
 ## Testing
 
-当前测试为 111 个，全部离线、无 API key、无需 Stata/R：
+当前测试为 124 个，全部离线、无 API key、无需 Stata/R：
 
 ```powershell
 python -m pytest tests/ -p no:cacheprovider
+python -m ruff check scripts tests
 ```
 
-覆盖：
-
-| 测试文件 | 数量 | 覆盖 |
-|---|---:|---|
-| `tests/test_cli.py` | 25 | CLI 子命令、别名、Windows ASCII-safe banner |
-| `tests/test_doctor.py` | 2 | 本地环境与项目文件健康检查 |
-| `tests/test_identify_strategy.py` | 30 | 六类识别策略评分、brief 加载、报告渲染 |
-| `tests/test_scaffold.py` | 20 | Stata/R 模板、目录生成、CLI 端到端 |
-| `tests/test_session.py` | 27 | session 生命周期、manifest、CHANGELOG、终稿标记 |
-| `tests/test_robustness_checks.py` | 7 | Stage 4 verifier、AI 味扫描、因果过度声称、引用 placeholder、fail-under |
+覆盖 CLI 分发、doctor、自带案例、识别策略、Stata/R scaffold、数据审计、稳健性/写作 verifier、paper outline/audit 和 session 生命周期。
 
 ## License
 

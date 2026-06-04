@@ -6,15 +6,15 @@
 
 | 模块 | 状态 | 说明 |
 |---|---|---|
-| CLI | 可用 | `scripts/cli.py` 统一入口，支持 `doctor/brainstorm/identify/scaffold/verify/session` |
+| CLI | 可用 | `scripts/cli.py` 统一入口，支持 `doctor/brainstorm/identify/data-audit/scaffold/verify/paper/session` |
 | Doctor | 可用 | `scripts/doctor.py` 检查 Python 版本、关键文件、核心依赖和可选依赖 |
 | Stage 1 question | 可用 | `RESEARCH_QUESTION.md` 提供研究问题五问 |
 | Stage 2 design | 可用 | `scripts/identify_strategy.py` 支持 DiD/RDD/IV/SCM/Matching/DML 推荐 |
-| Stage 3 execute | 可用 | `scripts/scaffold.py` 支持 Stata DiD/RDD 与 R DiD 骨架 |
+| Stage 3 data-audit/execute | 可用 | `scripts/data_audit.py` 检查 CSV 样本结构；`scripts/scaffold.py` 支持 Stata DiD/RDD 与 R DiD 骨架 |
 | Stage 4 verify | 可用 | `scripts/robustness_checks.py` 离线扫描方法证据、AI 味、因果过度声称和引用风险 |
-| Stage 5 write | 可用基础版 | `scripts/session.py` 管理 manifest、CHANGELOG、版本和审稿意见 |
-| Examples | 最小可跑 | `examples/case-min-wage-did/research_brief.yaml` 可用于 smoke test |
-| Tests | 可用 | 111 个离线 pytest，CI 友好 |
+| Stage 5 paper/write | 可用 | `scripts/paper_pipeline.py` 支持 outline/audit；`scripts/session.py` 管理 manifest、CHANGELOG、版本和审稿意见 |
+| Examples | 最小可跑 | `examples/case-min-wage-did/` 提供 brief、CSV fixture 和草稿 excerpt |
+| Tests | 可用 | 124 个离线 pytest，CI 友好 |
 
 ## 设计原则
 
@@ -47,19 +47,28 @@ econ-paper-studio/
 │   ├── cli.py
 │   ├── doctor.py
 │   ├── identify_strategy.py
+│   ├── data_audit.py
 │   ├── scaffold.py
 │   ├── robustness_checks.py
+│   ├── paper_pipeline.py
 │   └── session.py
 ├── references/
 │   ├── anti_ai_phrases.md
+│   ├── data_validation_protocol.md
+│   ├── writing_quality_protocol.md
 │   └── methods/did.md
 ├── examples/
 │   ├── README.md
-│   └── case-min-wage-did/research_brief.yaml
+│   └── case-min-wage-did/
+│       ├── research_brief.yaml
+│       ├── panel_sample.csv
+│       └── draft_excerpt.md
 └── tests/
     ├── test_cli.py
+    ├── test_data_audit.py
     ├── test_doctor.py
     ├── test_identify_strategy.py
+    ├── test_paper_pipeline.py
     ├── test_scaffold.py
     ├── test_robustness_checks.py
     └── test_session.py
@@ -79,6 +88,7 @@ econ-paper-studio/
 - 为 `verify` 增加 `--strategy RDD/IV/SCM/PSM/DML` 的更多 fixture。
 - 扩展文本中因果过度声称扫描：覆盖更多中文措辞和 claim-to-evidence 对齐规则。
 - 增加表文一致性静态检查：扫描 `Table X` / `Figure X` 引用是否有对应文件或标签。
+- 扩展 `data-audit`：支持 join plan、样本流失表和聚类小样本推断建议。
 
 ### P2：补完整 case
 
@@ -94,7 +104,7 @@ econ-paper-studio/
 
 ### P4：写作/R&R 辅助
 
-- 在 `session.py` 基础上补 reviewer comment 结构化解析。
+- 在 `paper_pipeline.py` 基础上补 reviewer comment 结构化解析。
 - 生成 point-by-point response 模板，但不伪造修改位置。
 - 把 anti-AI phrase scan 与 session iteration score 关联。
 
@@ -109,6 +119,8 @@ econ-paper-studio/
 ## 已知边界
 
 - `verify` 是静态检查，不跑真实回归。
+- `data-audit` 只查结构性数据风险，不证明数据来源可靠。
+- `paper audit` 只查文本风险，不证明引用真实或 claim 被文献支持。
 - Stata/R 模板仍需要用户替换变量名和数据路径。
 - Python + StatsPAI 执行模板尚未实现。
 - 引用真实性需要后续外部 API 或人工核验。
