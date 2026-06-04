@@ -17,7 +17,7 @@ question -> design -> data-audit -> execute -> verify -> paper -> session
 | design | `econ-studio identify --brief <brief.yaml>` | 根据 brief 推荐 DiD/RDD/IV/SCM/Matching/DML，并给出识别威胁和稳健性清单 |
 | data-audit | `econ-studio data-audit --csv <panel.csv> --key id --key year` | 检查空样本、重复键、缺失、处理变量变化、结果变量类型和聚类数量 |
 | execute | `econ-studio scaffold --strategy DiD --session <name> --lang stata` | 生成 Stata/R 分析骨架、表图目录和 replication-package 结构 |
-| verify | `econ-studio verify --strategy DiD --analysis outputs\<name> --paper draft.md` | 离线扫描方法稳健性证据、AI 味短语、引用占位符和因果过度声称 |
+| verify | `econ-studio verify --strategy DiD --analysis outputs\<name> --paper draft.md` | 离线扫描方法稳健性证据、空泛写作短语、引用占位符和因果过度声称 |
 | paper | `econ-studio paper outline/audit` | 从 brief 生成论文大纲，或审计草稿结构、贡献句、引用风险和图表标题 |
 | session | `econ-studio init/list/show/add/add-review/promote` | 管理论文版本、审稿意见和终稿标记 |
 
@@ -72,6 +72,19 @@ econ-studio paper audit `
 ```
 
 如果没有安装 entry point，可以把 `econ-studio` 换成 `python scripts\cli.py`。
+
+## 文档入口
+
+| 文档 | 用途 |
+|---|---|
+| [docs/QUICKSTART_CN.md](docs/QUICKSTART_CN.md) | 更详细的最小可运行路径 |
+| [docs/CLI_REFERENCE.md](docs/CLI_REFERENCE.md) | 命令和参数说明 |
+| [docs/AGENT_RUNBOOK.md](docs/AGENT_RUNBOOK.md) | agent 接手项目时的执行顺序 |
+| [docs/SKILL_LOADOUT.md](docs/SKILL_LOADOUT.md) | 配套 skills 加载清单 |
+| [docs/QUALITY_GATES.md](docs/QUALITY_GATES.md) | 投稿/交付前质量闸门 |
+| [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) | 项目目录和提交边界 |
+
+根目录的 `skill_loadout.yaml` 是同一份 skills 清单的机器可读版本，方便 agent 或脚本读取。
 
 ## 设计取舍
 

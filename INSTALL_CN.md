@@ -115,7 +115,7 @@ python scripts\cli.py paper audit `
 | data-audit | `python scripts\cli.py data-audit --csv <panel.csv> --key id --key year` | 检查重复键、缺失、处理变量变化、结果变量类型和聚类数量 |
 | execute | `python scripts\cli.py scaffold --strategy DiD --session <name> --lang stata` | 生成 Stata/R 骨架 |
 | verify | `python scripts\cli.py verify --strategy DiD --analysis outputs\<name>` | 离线质量闸门 |
-| paper | `python scripts\cli.py paper outline/audit` | 生成论文大纲或审计草稿结构、引用风险、AI 味和图表标题 |
+| paper | `python scripts\cli.py paper outline/audit` | 生成论文大纲或审计草稿结构、引用风险、空泛写作和图表标题 |
 | write | `python scripts\cli.py init/list/show/add/add-review/promote` | 管理论文版本 |
 
 短别名：
@@ -242,6 +242,12 @@ git rm -r --cached outputs
 ## 10. 进一步阅读
 
 - [README.md](./README.md) - 项目简介和快速试用
+- [docs/QUICKSTART_CN.md](./docs/QUICKSTART_CN.md) - 更详细的最小可运行路径
+- [docs/CLI_REFERENCE.md](./docs/CLI_REFERENCE.md) - 命令和参数说明
+- [docs/AGENT_RUNBOOK.md](./docs/AGENT_RUNBOOK.md) - agent 接手项目的执行顺序
+- [docs/SKILL_LOADOUT.md](./docs/SKILL_LOADOUT.md) - 配套 skills 加载清单
+- [docs/PROJECT_STRUCTURE.md](./docs/PROJECT_STRUCTURE.md) - 项目目录和提交边界
+- [docs/QUALITY_GATES.md](./docs/QUALITY_GATES.md) - 投稿/交付前质量闸门
 - [WORKFLOW.md](./WORKFLOW.md) - 五阶段工作流
 - [RESEARCH_QUESTION.md](./RESEARCH_QUESTION.md) - 研究问题模板
 - [TESTING.md](./TESTING.md) - 测试说明

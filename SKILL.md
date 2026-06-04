@@ -9,6 +9,25 @@ End-to-end empirical economics workflow. Five stages: question → design → ex
 
 > **WORKFLOW.md** is the single source of truth for the five-stage pipeline. This file is the Cursor/Claude Code skill entry that describes activation conditions and routing rules.
 
+## Required Companion Skills
+
+When the platform has these skills available, load them before doing substantive work:
+
+1. `superpowers:using-superpowers`
+2. `superpowers:executing-plans`
+3. `superpowers:systematic-debugging`
+4. `superpowers:verification-before-completion`
+5. `data:statistical-analysis`
+6. `data:validate-data`
+7. `data:create-viz`
+8. `content-research-writer`
+9. `documents:documents`
+
+Detailed purpose, fallback behavior, and external writing references are documented in `docs/SKILL_LOADOUT.md`.
+The same loadout is also available as machine-readable metadata in `skill_loadout.yaml`.
+
+Do not treat missing companion skills as a reason to stop. Fall back to the local CLI gates: `doctor`, `identify`, `data-audit`, `scaffold`, `verify`, `paper audit`, and `session`.
+
 ## When to Use This Skill
 
 Yes:
@@ -149,8 +168,14 @@ If those skills are not installed, this skill still works in "standalone mode" b
 | File | Role |
 |---|---|
 | `README.md` | Project intro |
+| `skill_loadout.yaml` | Machine-readable companion skill list |
 | `PROJECT_PLAN.md` | Full task breakdown |
 | `WORKFLOW.md` | Five-stage workflow detail |
+| `docs/AGENT_RUNBOOK.md` | Step-by-step agent handoff and execution protocol |
+| `docs/SKILL_LOADOUT.md` | Companion skills to load with this project |
+| `docs/CLI_REFERENCE.md` | Command reference |
+| `docs/QUALITY_GATES.md` | Pre-delivery gates |
+| `docs/PROJECT_STRUCTURE.md` | Directory layout and commit boundaries |
 | `RESEARCH_QUESTION.md` | Stage 1 template |
 | `INSTALL_CN.md` | Chinese install guide |
 | `scripts/identify_strategy.py` | Stage 2 strategy selector |

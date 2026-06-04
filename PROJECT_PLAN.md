@@ -11,8 +11,9 @@
 | Stage 1 question | 可用 | `RESEARCH_QUESTION.md` 提供研究问题五问 |
 | Stage 2 design | 可用 | `scripts/identify_strategy.py` 支持 DiD/RDD/IV/SCM/Matching/DML 推荐 |
 | Stage 3 data-audit/execute | 可用 | `scripts/data_audit.py` 检查 CSV 样本结构；`scripts/scaffold.py` 支持 Stata DiD/RDD 与 R DiD 骨架 |
-| Stage 4 verify | 可用 | `scripts/robustness_checks.py` 离线扫描方法证据、AI 味、因果过度声称和引用风险 |
+| Stage 4 verify | 可用 | `scripts/robustness_checks.py` 离线扫描方法证据、空泛写作、因果过度声称和引用风险 |
 | Stage 5 paper/write | 可用 | `scripts/paper_pipeline.py` 支持 outline/audit；`scripts/session.py` 管理 manifest、CHANGELOG、版本和审稿意见 |
+| Docs | 可用 | `docs/` 提供 quickstart、CLI reference、agent runbook、skill loadout、quality gates 和目录说明 |
 | Examples | 最小可跑 | `examples/case-min-wage-did/` 提供 brief、CSV fixture 和草稿 excerpt |
 | Tests | 可用 | 124 个离线 pytest，CI 友好 |
 
@@ -41,8 +42,17 @@ econ-paper-studio/
 ├── WORKFLOW.md
 ├── RESEARCH_QUESTION.md
 ├── SKILL.md
+├── skill_loadout.yaml
 ├── TESTING.md
 ├── pyproject.toml
+├── docs/
+│   ├── README.md
+│   ├── QUICKSTART_CN.md
+│   ├── CLI_REFERENCE.md
+│   ├── AGENT_RUNBOOK.md
+│   ├── SKILL_LOADOUT.md
+│   ├── PROJECT_STRUCTURE.md
+│   └── QUALITY_GATES.md
 ├── scripts/
 │   ├── cli.py
 │   ├── doctor.py

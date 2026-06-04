@@ -1,0 +1,43 @@
+version: 1
+purpose: "Companion skills to load when using econ-paper-studio for empirical research and paper writing."
+load_order:
+  - name: "superpowers:using-superpowers"
+    required: true
+    role: "Select and activate the right skills before action."
+  - name: "superpowers:executing-plans"
+    required: true
+    role: "Execute long research tasks step by step."
+  - name: "superpowers:systematic-debugging"
+    required: true
+    role: "Debug Stata, R, Python, CSDID, DML, TERGM, and data pipeline failures by root cause."
+  - name: "superpowers:verification-before-completion"
+    required: true
+    role: "Require fresh tests, lint, smoke checks, and CI evidence before completion claims."
+  - name: "data:statistical-analysis"
+    required: true
+    role: "Keep statistical claims, effect sizes, significance, sample size, multiple testing, and causal language bounded."
+  - name: "data:validate-data"
+    required: true
+    role: "Check merge keys, duplicates, join explosion, missingness, denominators, clustering, and data support for claims."
+  - name: "data:create-viz"
+    required: true
+    role: "Create review-ready figures with clear axes, scales, uncertainty, captions, and export formats."
+  - name: "content-research-writer"
+    required: true
+    role: "Shape paper structure, introduction, contribution, literature organization, and paragraph-level revision."
+  - name: "documents:documents"
+    required: false
+    role: "Inspect and edit Word/docx manuscripts and perform visual QA."
+external_references:
+  - name: "awesome-ai-research-writing"
+    role: "Logic checks, title/caption quality, experiment analysis, reviewer perspective, and model choice."
+  - name: "humanizer"
+    role: "Remove filler, promotional language, vague attribution, AI-style transitions, and generic phrasing."
+  - name: "AI-research-SKILLs/ml-paper-writing"
+    role: "No fabricated citations, repo-first understanding, one-sentence contribution, reviewer checklist."
+  - name: "AI-research-SKILLs/academic-plotting"
+    role: "Publication-quality plots, vector output, uncertainty display, captions, and table standards."
+fallback:
+  - "If companion skills are unavailable, follow docs/AGENT_RUNBOOK.md and docs/QUALITY_GATES.md."
+  - "Always run econ-studio doctor, data-audit, verify, and paper audit before delivery."
+  - "Never fabricate citations, numerical results, or source support."

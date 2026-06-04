@@ -308,7 +308,7 @@ python scripts/session.py add-review my-mw-study \
 
 ### 写作质检边界
 
-`paper audit` 会检查核心章节、贡献句、引用占位符、AI 味填充语、因果过度声称和图表标题。它不会证明引用真实，也不会证明文献支持具体 claim。真实引用必须继续通过 DOI、期刊官网、Crossref/OpenAlex/Semantic Scholar 或人工阅读核验。
+`paper audit` 会检查核心章节、贡献句、引用占位符、空泛填充语、因果过度声称和图表标题。它不会证明引用真实，也不会证明文献支持具体 claim。真实引用必须继续通过 DOI、期刊官网、Crossref/OpenAlex/Semantic Scholar 或人工阅读核验。
 
 ---
 

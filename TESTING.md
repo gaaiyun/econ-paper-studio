@@ -19,8 +19,8 @@ pytest tests/
 | `tests/test_cli.py` | `scripts/cli.py` | 27 | 子命令分发 / 别名解析 / banner / open_doc + subprocess 端到端 |
 | `tests/test_doctor.py` | `scripts/doctor.py` | 2 | 本地环境 / 关键文件 / 依赖健康检查 |
 | `tests/test_data_audit.py` | `scripts/data_audit.py` | 4 | CSV / DataFrame 数据结构审计：重复键、聚类数量、缺失、CLI JSON/fail-on-critical |
-| `tests/test_robustness_checks.py` | `scripts/robustness_checks.py` | 8 | Stage 4 静态 verifier / AI 味扫描 / 因果过度声称 / 引用 placeholder / References 标题识别 / fail-under |
-| `tests/test_paper_pipeline.py` | `scripts/paper_pipeline.py` | 6 | paper outline / paper audit / 引用占位 / AI 味 / 因果过度声称 / 图表标题 |
+| `tests/test_robustness_checks.py` | `scripts/robustness_checks.py` | 8 | Stage 4 静态 verifier / 空泛写作扫描 / 因果过度声称 / 引用 placeholder / References 标题识别 / fail-under |
+| `tests/test_paper_pipeline.py` | `scripts/paper_pipeline.py` | 6 | paper outline / paper audit / 引用占位 / 空泛写作 / 因果过度声称 / 图表标题 |
 
 ## 测试分类
 
