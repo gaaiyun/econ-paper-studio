@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "econ-paper-studio"
-version = "0.2.1"
-description = "Agent-native empirical economics research workflow: question -> design -> data audit -> scaffold -> verify -> paper quality audit -> session. Chinese-friendly, Stata-first."
+version = "0.3.0"
+description = "Agent-native empirical economics research workflow: skills routing -> design memo -> data contract -> evidence ledger -> claim audit -> reviewer gauntlet."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

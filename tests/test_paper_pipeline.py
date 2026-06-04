@@ -33,6 +33,32 @@ def test_audit_paper_flags_placeholders_ai_phrases_and_weak_captions(tmp_path):
     assert not checks["caption.quality"].passed
 
 
+def test_audit_paper_flags_vague_attribution_promotional_language_and_claim_without_evidence(tmp_path):
+    draft = tmp_path / "draft.md"
+    draft.write_text(
+        "## Introduction\n\n"
+        "Many scholars believe this important topic is highly significant and transformative. "
+        "Claim: The policy improves all firm outcomes.\n\n"
+        "## Data\n\n"
+        "The sample is described briefly.\n\n"
+        "## Empirical Strategy\n\n"
+        "The model uses fixed effects.\n\n"
+        "## Results\n\n"
+        "Table 1. Results\n\n"
+        "## Robustness\n\n"
+        "Additional checks are planned.\n\n"
+        "## References\n\n"
+        "Smith, J. 2020.\n",
+        encoding="utf-8",
+    )
+
+    checks = {item.id: item for item in audit_paper(draft).checks}
+
+    assert not checks["writing.vague_attribution"].passed
+    assert not checks["writing.promotional_language"].passed
+    assert not checks["writing.claim_evidence_marker"].passed
+
+
 def test_audit_paper_rewards_complete_concrete_draft(tmp_path):
     draft = tmp_path / "draft.md"
     draft.write_text(

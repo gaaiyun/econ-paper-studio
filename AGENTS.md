@@ -6,10 +6,11 @@
 
 1. `SKILL.md`
 2. `skill_loadout.yaml`
-3. `docs/UPSTREAM_SKILLS.md`
-4. `docs/AGENT_RUNBOOK.md`
-5. `docs/SKILL_LOADOUT.md`
-6. `docs/QUALITY_GATES.md`
+3. `research_skill_registry.yaml`
+4. `docs/UPSTREAM_SKILLS.md`
+5. `docs/AGENT_RUNBOOK.md`
+6. `docs/SKILL_LOADOUT.md`
+7. `docs/QUALITY_GATES.md`
 
 ## 定位
 
@@ -18,6 +19,7 @@
 - 允许并鼓励 agent 调 Stata/R/Python、联网引用核验、MCP、数据库、Coze workflow、OpenAlex/Crossref/Semantic Scholar 等真实工具。
 - 本地 CLI 质量闸门用于预检、流程回归和交付前核验，不是为了限制 agent 调用真实研究工具。
 - 不允许在没有真实数据、真实运行或真实来源核验时编造结果、引用或结论。
+- `ledger` 和 `claim-audit` 是论文结论的证据账本，不是装饰性文档；核心结论必须能回到表图、代码、数据、样本、模型和引用核验状态。
 
 ## 必须加载的配套 skills
 
@@ -41,13 +43,16 @@
 
 1. `econ-studio doctor --strict`
 2. 读目标论文/数据项目的 handoff、README、changelog、audit 文档。
-3. `econ-studio identify` 确认识别策略。
-4. `econ-studio data-audit` 查数据结构。
-5. 真实运行 Stata/R/Python 代码，不能只看模板。
-6. `econ-studio verify` 查方法证据和引用/写作风险。
-7. `econ-studio paper audit` 查论文草稿。
-8. 需要 docx 时用 `documents:documents` 或对应文档工具做视觉 QA。
-9. 结束前跑 `doctor` 和相关质量闸门，并写清哪些模型、引用、文档渲染已经真实执行。
+3. `econ-studio skills plan --task full-paper` 确认本轮应加载哪些上游 skills。
+4. `econ-studio identify` 和 `econ-studio design-memo` 确认识别策略、estimand、假设和威胁。
+5. `econ-studio data-audit` 查数据结构并生成 data contract。
+6. 真实运行 Stata/R/Python 代码，不能只看模板。
+7. 用 `econ-studio ledger init/add/audit` 记录表图、代码、数据、样本、模型、estimand 和聚类层级。
+8. `econ-studio verify` 查方法证据和引用/写作风险。
+9. `econ-studio claim-audit` 和 `econ-studio reviewer-gauntlet` 查论文 claim 是否有证据链。
+10. `econ-studio paper audit` 查论文草稿。
+11. 需要 docx 时用 `documents:documents` 或对应文档工具做视觉 QA。
+12. 结束前跑 `doctor` 和相关质量闸门，并写清哪些模型、引用、文档渲染已经真实执行。
 
 ## 边界
 

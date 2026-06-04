@@ -1,0 +1,121 @@
+version: 1
+purpose: "Econometrics-first upstream skill routing for agent-native empirical paper work."
+external_reference_policy:
+  install_outside_repo: true
+  preferred_reference_dir: "_references/upstream-skills"
+  read_before_use:
+    - "SKILL.md"
+    - "README"
+    - "license"
+  record_in_session:
+    - "skill name"
+    - "source URL"
+    - "version or commit when available"
+    - "what was actually used"
+skills:
+  - name: "Auto-Empirical Research Skills"
+    source: "https://github.com/brycewang-stanford/Awesome-Agent-Skills-for-Empirical-Research"
+    role: "Find empirical-research skills by workflow and social-science discipline."
+  - name: "StatsPAI"
+    source: "https://github.com/brycewang-stanford/StatsPAI"
+    role: "Agent-native econometrics and causal-inference function registry."
+  - name: "Academic Research Skills"
+    source: "https://github.com/Imbad0202/academic-research-skills"
+    role: "Research -> write -> review -> revise -> finalize paper workflow."
+  - name: "obra/superpowers"
+    source: "https://github.com/obra/superpowers"
+    role: "Planning, TDD, systematic debugging, and verification-before-completion."
+  - name: "Stata skill"
+    source: "https://github.com/dylantmoore/stata-skill"
+    role: "Stata idioms, do-file patterns, and applied econometrics packages."
+  - name: "Social-science methods skills"
+    source: "https://github.com/sshtomar/claude-code-skills-social-science"
+    role: "Social-science method discipline for DiD, RDD, IV, and related designs."
+  - name: "K-Dense Scientific Agent Skills"
+    source: "https://github.com/K-Dense-AI/scientific-agent-skills"
+    role: "Reusable scientific workflow patterns and skill safety lessons."
+  - name: "OpenJudge paper-review"
+    source: "https://github.com/agentscope-ai/openjudge/blob/main/skills/paper-review/SKILL.md"
+    role: "Multi-stage academic paper review rubric reference."
+  - name: "Awesome Econ AI Stuff"
+    source: "https://github.com/meleantonio/awesome-econ-ai-stuff"
+    role: "Economics-oriented AI skill and tool discovery."
+  - name: "humanizer"
+    source: "https://github.com/blader/humanizer"
+    role: "Remove AI-like filler, promotional language, and vague attribution."
+  - name: "AI Research SKILLs"
+    source: "https://github.com/Orchestra-Research/AI-Research-SKILLs"
+    role: "Academic writing, no-fabricated-citation, and plotting guidance."
+phases:
+  literature:
+    description: "Find and organize real literature without fabricating sources."
+    skills:
+      - "Auto-Empirical Research Skills"
+      - "Academic Research Skills"
+      - "Awesome Econ AI Stuff"
+  design:
+    description: "Turn a question into estimand, assumptions, diagnostics, and alternative designs."
+    skills:
+      - "StatsPAI"
+      - "Social-science methods skills"
+      - "obra/superpowers"
+  execute:
+    description: "Run Stata/R/Python code and keep execution logs reproducible."
+    skills:
+      - "StatsPAI"
+      - "Stata skill"
+      - "obra/superpowers"
+  data_audit:
+    description: "Check data keys, joins, denominators, missingness, and inference clusters."
+    skills:
+      - "Social-science methods skills"
+      - "StatsPAI"
+  write:
+    description: "Write concrete empirical prose with bounded claims and review-ready tables."
+    skills:
+      - "Academic Research Skills"
+      - "humanizer"
+      - "AI Research SKILLs"
+  claim_audit:
+    description: "Map paper claims back to result artifacts, code, data, and verified references."
+    skills:
+      - "OpenJudge paper-review"
+      - "Academic Research Skills"
+      - "humanizer"
+  review:
+    description: "Run method, data, citation, writing, and replication reviewer passes."
+    skills:
+      - "OpenJudge paper-review"
+      - "K-Dense Scientific Agent Skills"
+      - "obra/superpowers"
+  submit:
+    description: "Prepare final package, response letter, and reproducibility notes."
+    skills:
+      - "Academic Research Skills"
+      - "AI Research SKILLs"
+      - "obra/superpowers"
+tasks:
+  full-paper:
+    phases:
+      - "literature"
+      - "design"
+      - "data_audit"
+      - "execute"
+      - "write"
+      - "claim_audit"
+      - "review"
+      - "submit"
+  literature:
+    phases: ["literature"]
+  design:
+    phases: ["design"]
+  execute:
+    phases: ["data_audit", "execute"]
+  audit:
+    phases: ["data_audit", "claim_audit", "review"]
+  write:
+    phases: ["write", "claim_audit"]
+  review:
+    phases: ["claim_audit", "review"]
+  submit:
+    phases: ["review", "submit"]

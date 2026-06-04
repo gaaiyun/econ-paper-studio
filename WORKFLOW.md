@@ -1,12 +1,12 @@
-# 五阶段工作流（econ-paper-studio）
+# 计量论文 agent 工作流（econ-paper-studio）
 
-把一篇计量实证论文从想法到投出去拆成五个阶段。每个阶段都有"何时跳过"的明确条件，**不是教条**。
+把一篇计量实证论文从想法到投出去拆成一组可检查的阶段。每个阶段都有"何时跳过"的明确条件，**不是教条**。
 
 ```
-question → design → execute → verify → write
+skills → question → design → data-contract → execute → evidence-ledger → claim-audit → reviewer-gauntlet → write
 ```
 
-其中 `data-audit` 是 execute 前的硬闸门：先检查分析样本结构，再让 Stata/R/Python 跑模型。
+其中 `data-audit` 是 execute 前的硬闸门，`ledger` 和 `claim-audit` 是写作前的证据闸门：先检查分析样本结构，再让 Stata/R/Python 跑模型，最后把每条论文结论连回表图、代码、数据和引用核验状态。
 
 ---
 
@@ -21,15 +21,34 @@ question → design → execute → verify → write
 3. 跳过文献综述，"我先做实证再补文献" → 后期发现别人 5 年前已经做过同样的事
 4. R&R 时找不到当时怎么做的、为什么这么做 → 重新跑、重新想，浪费几周
 
-这五个阶段对应这五种失败模式：
+这些阶段对应常见失败模式：
 
 | 阶段 | 防的失败 |
 |---|---|
+| 0. skills | 上游 skills 乱装乱用 → agent 读了不该读的脚本或跳过必要技能 |
 | 1. question | 没想清楚就开干 → "找显著性" |
 | 2. design | 选错识别策略 → 内生性问题没解决 |
-| 3. execute | 写完代码无法复现 → 自己半年后看不懂 |
+| 3. data-contract/execute | 写完代码无法复现 → 自己半年后看不懂 |
 | 4. verify | 漏了关键稳健性 → 被审稿人 desk reject |
-| 5. write | 写作风格不一致 → editor 直接打回 |
+| 5. evidence/write | claim 找不到证据 → editor 或 reviewer 直接打回 |
+
+---
+
+## 阶段 0：skills — 上游技能路由和安全审计
+
+**何时跳过**：只跑本仓库 toy fixture，且不加载外部 skills。
+
+**何时使用**：
+- 让 Codex、Claude Code、OpenCode、Cursor、Coze 等 agent 接手真实论文；
+- 要安装或挂载上游 skill 仓库；
+- 要明确当前任务需要 literature、design、execute、write、review 中哪些技能。
+
+```bash
+econ-studio skills plan --task full-paper
+econ-studio skills audit --dir _references/upstream-skills/some-skill
+```
+
+`plan` 输出每个阶段应加载的上游 skills 和来源；`audit` 检查本地 skill 目录是否缺 `SKILL.md`，以及是否出现网络调用、环境变量/secret 读取、SSH key 或浏览器数据访问等风险信号。
 
 ---
 
@@ -111,6 +130,8 @@ question → design → execute → verify → write
 
 ```bash
 python scripts/identify_strategy.py --brief outputs/<session>/research_brief.yaml
+python scripts/evidence_pipeline.py design-memo --brief outputs/<session>/research_brief.yaml \
+  --output outputs/<session>/design_memo.md
 ```
 
 脚本会基于 brief 里的数据结构、识别策略雏形、自然实验和识别威胁走一个决策树，推荐 1-2 个候选策略，并指出每个的关键 trade-off。
@@ -139,7 +160,7 @@ python scripts/identify_strategy.py --brief outputs/<session>/research_brief.yam
 
 ### Stage 2 产出
 
-`outputs/<session>/identify_strategy.md`：
+`outputs/<session>/identify_strategy.md` + `outputs/<session>/design_memo.md`：
 
 ```markdown
 # Identification Strategy: <session>
@@ -160,7 +181,7 @@ python scripts/identify_strategy.py --brief outputs/<session>/research_brief.yam
 
 ---
 
-## 阶段 3：execute — 跑数据 + 出结果
+## 阶段 3：data-contract + execute — 跑数据 + 出结果
 
 **何时跳过**：从来不跳过。
 
@@ -197,6 +218,7 @@ outputs/my-mw-study/
 
 **核心设计**：
 - **先审数据结构**：检查重复键、缺失、处理变量变化、结果变量类型和聚类数量
+- **保留 data contract**：报告分析粒度、join explosion 风险、缺失边界、分母边界和聚类层级
 - **Stata 做你熟的**：reghdfe + estout（有传统的论文表样式）
 - **R 做 Stata 不擅长的**：现代 DiD 估计器、HonestDiD、ggplot 出版级图
 - **00_master 文件**：保证从原始数据到 final tables/figures 一行命令复现
@@ -205,11 +227,11 @@ outputs/my-mw-study/
 
 ### Stage 3 产出
 
-`data_audit.md` + `outputs/<session>/tables/` + `outputs/<session>/figures/` + 每个脚本顶部的 docstring 说明它在做什么。
+`data_audit.md` + data contract + `outputs/<session>/tables/` + `outputs/<session>/figures/` + 每个脚本顶部的 docstring 说明它在做什么。
 
 ---
 
-## 阶段 4：verify — 稳健性检验
+## 阶段 4：evidence-ledger + verify — 稳健性检验和证据账本
 
 **何时跳过**：内部讨论稿、prototype。
 
@@ -218,6 +240,20 @@ outputs/my-mw-study/
 **用什么**：
 
 ```bash
+python scripts/evidence_pipeline.py ledger init --ledger outputs/<session>/evidence_ledger.json
+
+python scripts/evidence_pipeline.py ledger add --ledger outputs/<session>/evidence_ledger.json \
+  --artifact-id table1 \
+  --title "Baseline estimates" \
+  --artifact-path tables/table1.tex \
+  --code-path do/03_main.do \
+  --data-source data/analysis_panel.csv \
+  --sample "analysis sample" \
+  --model "main specification" \
+  --estimand ATT \
+  --cluster unit_id \
+  --claim "core empirical claim"
+
 python scripts/robustness_checks.py \
   --strategy DiD \
   --analysis outputs/<session> \
@@ -254,13 +290,23 @@ python scripts/robustness_checks.py \
 
 ---
 
-## 阶段 5：write — 论文写作
+## 阶段 5：claim-audit + reviewer-gauntlet + write — 论文写作
 
 **何时跳过**：只是内部分析报告，不是论文。
 
-**用什么**：`scripts/paper_pipeline.py` 生成大纲和审计草稿，`scripts/session.py` 记录版本和审稿意见。
+**用什么**：`scripts/evidence_pipeline.py` 做 claim audit 和 reviewer gauntlet，`scripts/paper_pipeline.py` 生成大纲和审计草稿，`scripts/session.py` 记录版本和审稿意见。
 
 ```bash
+python scripts/evidence_pipeline.py claim-audit \
+  --paper paper/draft.md \
+  --ledger outputs/my-mw-study/evidence_ledger.json \
+  --output outputs/my-mw-study/claim_audit.md
+
+python scripts/evidence_pipeline.py reviewer-gauntlet \
+  --paper paper/draft.md \
+  --ledger outputs/my-mw-study/evidence_ledger.json \
+  --output outputs/my-mw-study/reviewer_gauntlet.md
+
 python scripts/paper_pipeline.py outline \
   --brief examples/case-min-wage-did/research_brief.yaml \
   --output outputs/my-mw-study/paper_outline.md
@@ -308,7 +354,7 @@ python scripts/session.py add-review my-mw-study \
 
 ### 写作质检边界
 
-`paper audit` 会检查核心章节、贡献句、引用占位符、空泛填充语、因果过度声称和图表标题。它不会证明引用真实，也不会证明文献支持具体 claim。真实引用必须继续通过 DOI、期刊官网、Crossref/OpenAlex/Semantic Scholar 或人工阅读核验。
+`paper audit` 会检查核心章节、贡献句、引用占位符、空泛填充语、vague attribution、promotional language、因果过度声称、显式 claim 是否有证据标记和图表标题。它不会证明引用真实，也不会证明文献支持具体 claim。真实引用必须继续通过 DOI、期刊官网、Crossref/OpenAlex/Semantic Scholar 或人工阅读核验。
 
 ---
 
@@ -344,12 +390,12 @@ python scripts/robustness_checks.py --strategy DiD --analysis outputs/my-mw-stud
 
 | 场景 | 推荐流程 |
 |---|---|
-| 复现别人的论文 | 跳 1+2，直接 execute |
-| 延续自己之前论文的 next step | 简化 1，重做 2 |
-| JMP / 毕业论文从 0 开始 | 完整 5 阶段 |
-| 已有结果，要开始写 | 跳 1-4，直接 write |
-| R&R 改稿 | 跳 1-3，重点 4+5（referee_response） |
-| 数据探索性分析 | 1+3 即可，不写论文跳 5 |
+| 复现别人的论文 | 跳 1+2，直接 data-contract + execute + ledger |
+| 延续自己之前论文的 next step | 简化 1，重做 2，保留 ledger |
+| JMP / 毕业论文从 0 开始 | 完整流程 |
+| 已有结果，要开始写 | 补 ledger + claim-audit，再 write |
+| R&R 改稿 | 跳 1-3，重点 verify + claim-audit + reviewer-gauntlet |
+| 数据探索性分析 | 1+3 即可，不写论文可跳 claim-audit |
 
 ---
 
@@ -364,6 +410,8 @@ python scripts/session.py init my-mw-study \
 # Stage 2: 识别策略选择
 python scripts/identify_strategy.py --brief examples/case-min-wage-did/research_brief.yaml \
   --output outputs/my-mw-study/identify_strategy.md
+python scripts/evidence_pipeline.py design-memo --brief examples/case-min-wage-did/research_brief.yaml \
+  --output outputs/my-mw-study/design_memo.md
 
 # Stage 3: 生成代码骨架
 python scripts/data_audit.py --csv examples/case-min-wage-did/panel_sample.csv \
@@ -373,12 +421,18 @@ python scripts/data_audit.py --csv examples/case-min-wage-did/panel_sample.csv \
 python scripts/scaffold.py --strategy DiD --session my-mw-study
 
 # Stage 4: 方法证据和写作风险核验
+python scripts/evidence_pipeline.py ledger init --ledger outputs/my-mw-study/evidence_ledger.json
 python scripts/robustness_checks.py \
   --strategy DiD \
   --analysis outputs/my-mw-study \
   --output outputs/my-mw-study/verify_report.md
 
 # Stage 5: 写作大纲和草稿审计
+python scripts/evidence_pipeline.py claim-audit \
+  --paper examples/case-min-wage-did/draft_excerpt.md \
+  --ledger outputs/my-mw-study/evidence_ledger.json \
+  --output outputs/my-mw-study/claim_audit.md
+
 python scripts/paper_pipeline.py outline \
   --brief examples/case-min-wage-did/research_brief.yaml \
   --output outputs/my-mw-study/paper_outline.md
@@ -395,10 +449,14 @@ python scripts/session.py show my-mw-study
 
 ```bash
 econ-studio init my-mw-study --rq "..." --strategy DiD
+econ-studio skills plan --task full-paper
 econ-studio identify --brief examples/case-min-wage-did/research_brief.yaml
+econ-studio design-memo --brief examples/case-min-wage-did/research_brief.yaml
 econ-studio data-audit --csv examples/case-min-wage-did/panel_sample.csv --key city_id --key year
 econ-studio scaffold --strategy DiD --session my-mw-study
+econ-studio ledger init --ledger outputs/my-mw-study/evidence_ledger.json
 econ-studio verify --strategy DiD --analysis outputs/my-mw-study
+econ-studio claim-audit --paper examples/case-min-wage-did/draft_excerpt.md --ledger outputs/my-mw-study/evidence_ledger.json
 econ-studio paper audit --paper examples/case-min-wage-did/draft_excerpt.md
 econ-studio add-review my-mw-study --version r1 --letter letter.pdf --decision major
 ```

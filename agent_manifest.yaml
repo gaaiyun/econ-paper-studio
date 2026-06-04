@@ -5,6 +5,7 @@ entrypoints:
   generic_agents: AGENTS.md
   skill: SKILL.md
   skill_loadout: skill_loadout.yaml
+  research_skill_registry: research_skill_registry.yaml
   runbook: docs/AGENT_RUNBOOK.md
   integrations: docs/AGENT_INTEGRATIONS.md
   upstream_skills: docs/UPSTREAM_SKILLS.md
@@ -27,8 +28,16 @@ platforms:
     install_notes: "Expose selected econ-studio commands through an API runner; Coze workflow calls the runner and stores outputs."
 commands:
   doctor: "econ-studio doctor --strict"
+  skills_plan: "econ-studio skills plan --task <task>"
+  skills_audit: "econ-studio skills audit --dir <skill-dir>"
+  design_memo: "econ-studio design-memo --brief <brief>"
   data_audit: "econ-studio data-audit --csv <csv> --key <unit> --key <time> --outcome <y> --treatment <d> --cluster <cluster>"
+  ledger_init: "econ-studio ledger init --ledger <ledger>"
+  ledger_add: "econ-studio ledger add --ledger <ledger> --artifact-id <id> --title <title> --artifact-path <artifact> --code-path <code> --data-source <data> --sample <sample> --model <model> --estimand <estimand> --cluster <cluster>"
+  ledger_audit: "econ-studio ledger audit --ledger <ledger>"
   verify: "econ-studio verify --strategy <strategy> --analysis <dir> --paper <draft>"
+  claim_audit: "econ-studio claim-audit --paper <draft> --ledger <ledger>"
+  reviewer_gauntlet: "econ-studio reviewer-gauntlet --paper <draft> --ledger <ledger>"
   paper_audit: "econ-studio paper audit --paper <draft>"
 live_tools_expected:
   - "Stata/R/Python execution"

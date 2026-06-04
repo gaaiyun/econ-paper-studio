@@ -305,6 +305,31 @@ def render_report(result: DataAuditResult) -> str:
     else:
         lines.append("- No blocking data-audit issues found. Still verify data provenance and coding logs.")
 
+    check_map = {item.id: item for item in result.checks}
+    key_check = check_map.get("key.unique")
+    cluster_check = check_map.get("cluster.count")
+    missing_checks = [item for item in result.checks if item.id.startswith("missing.")]
+    missing_summary = "; ".join(f"{item.title.split(': ', 1)[-1]} {item.evidence}" for item in missing_checks) or "not checked"
+    join_risk = "low" if key_check and key_check.passed else "high or unknown"
+    denominator = (
+        "Analysis denominator is the audited CSV rows after the user-specified required/key/outcome/treatment filters. "
+        "Any model-specific sample drop must be recorded in the evidence ledger."
+    )
+    lines.extend(
+        [
+            "",
+            "## Data Contract",
+            "",
+            f"- Source: `{result.source}`",
+            f"- Analysis grain: `{', '.join(result.key_columns) if result.key_columns else 'not specified'}`",
+            f"- Join explosion risk: **{join_risk}** ({key_check.evidence if key_check else 'no key check requested'})",
+            f"- Missingness boundary: {missing_summary}",
+            f"- Denominator boundary: {denominator}",
+            f"- Cluster level: {cluster_check.evidence if cluster_check else 'not specified'}",
+            "- Claim boundary: this audit supports structural readiness only; causal claims still require executed models, diagnostics, and source-backed interpretation.",
+        ]
+    )
+
     lines.extend(
         [
             "",

@@ -30,10 +30,13 @@ econ-studio data-audit --csv data\analysis_panel.csv --key unit_id --key year --
 - 变量口径；
 - 是否存在重复 ID、重复年份或重复政策事件。
 
+报告里的 data contract 也要看：分析粒度、join explosion 风险、分母边界和聚类层级必须和后续模型一致。
+
 ## Gate 3. 计量设计
 
 ```powershell
 econ-studio identify --brief research_brief.yaml --output outputs\<session>\identify_strategy.md
+econ-studio design-memo --brief research_brief.yaml --output outputs\<session>\design_memo.md
 ```
 
 要求：
@@ -42,6 +45,20 @@ econ-studio identify --brief research_brief.yaml --output outputs\<session>\iden
 - 能解释为什么不用其他策略；
 - 剩余威胁写清楚；
 - 稳健性不是事后凑出来的。
+
+## Gate 3.5 上游 skills 和安全边界
+
+```powershell
+econ-studio skills plan --task full-paper
+econ-studio skills audit --dir path\to\upstream-skill
+```
+
+要求：
+
+- agent 知道本轮任务需要哪些上游 skills；
+- 上游 skill 不复制进本仓库；
+- 任何网络调用、环境变量读取、secret/SSH/browser data 风险都先写清楚；
+- 缺失的 skill 标记为缺失，不假装已经加载。
 
 ## Gate 4. 代码骨架和复现
 
@@ -71,6 +88,21 @@ econ-studio verify --strategy DiD --analysis outputs\<session> --paper paper\dra
 - 多结果/多分组没有多重检验处理；
 - 聚类层级和政策处理层级不一致。
 
+## Gate 5.5 证据账本和 claim
+
+```powershell
+econ-studio ledger audit --ledger outputs\<session>\evidence_ledger.json
+econ-studio claim-audit --paper paper\draft.md --ledger outputs\<session>\evidence_ledger.json
+econ-studio reviewer-gauntlet --paper paper\draft.md --ledger outputs\<session>\evidence_ledger.json
+```
+
+要求：
+
+- 每个核心表图有 artifact path、code path、data source、sample、model、estimand 和 cluster；
+- 每个显式 claim 能回到至少一个 ledger artifact；
+- reviewer gauntlet 的方法、数据、引用、写作和复现问题已处理或明确列为待办；
+- 没有把没有证据的机制、异质性或政策含义写成结论。
+
 ## Gate 6. 写作和图表
 
 ```powershell
@@ -83,6 +115,7 @@ econ-studio paper audit --paper paper\draft.md --fail-under 8
 - 因果语言有识别假设和边界；
 - 图表标题能说明样本、估计量、时间范围和不确定性；
 - 不用“重要意义”“深刻洞见”“全面分析”这类空话替代证据；
+- 不用 vague attribution 或 promotional language 代替具体文献和证据；
 - 不保留作者年份占位符或 citation-needed。
 
 ## Gate 7. 引用

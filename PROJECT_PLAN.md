@@ -1,16 +1,18 @@
 # 项目计划与路线图
 
-`econ-paper-studio` 是一个实证经济学论文 agent 工作流编排层。它不替代 Stata/R/Python，也不替代研究者判断；它把研究问题、识别策略、代码骨架、质量核验和论文版本管理放进一个可被 agent 接手的 session。
+`econ-paper-studio` 是一个实证经济学论文 agent 工作流编排层。它不替代 Stata/R/Python，也不替代研究者判断；它把上游 skills 路由、研究问题、识别策略、数据 contract、代码骨架、证据账本、claim audit、质量核验和论文版本管理放进一个可被 agent 接手的 session。
 
 ## 当前状态
 
 | 模块 | 状态 | 说明 |
 |---|---|---|
-| CLI | 可用 | `scripts/cli.py` 统一入口，支持 `doctor/brainstorm/identify/data-audit/scaffold/verify/paper/session` |
+| CLI | 可用 | `scripts/cli.py` 统一入口，支持 `doctor/skills/brainstorm/identify/design-memo/data-audit/scaffold/ledger/verify/claim-audit/reviewer-gauntlet/paper/session` |
 | Doctor | 可用 | `scripts/doctor.py` 检查 Python 版本、关键文件、核心依赖和可选依赖 |
+| Skills routing | 可用 | `research_skill_registry.yaml` + `scripts/skills.py` 输出任务级上游 skills 加载计划，并审计本地 skill 目录风险 |
 | Stage 1 question | 可用 | `RESEARCH_QUESTION.md` 提供研究问题五问 |
-| Stage 2 design | 可用 | `scripts/identify_strategy.py` 支持 DiD/RDD/IV/SCM/Matching/DML 推荐 |
-| Stage 3 data-audit/execute | 可用 | `scripts/data_audit.py` 检查 CSV 样本结构；`scripts/scaffold.py` 支持 Stata DiD/RDD 与 R DiD 骨架 |
+| Stage 2 design | 可用 | `scripts/identify_strategy.py` 支持 DiD/RDD/IV/SCM/Matching/DML 推荐；`scripts/evidence_pipeline.py design-memo` 输出识别 contract |
+| Stage 3 data-audit/execute | 可用 | `scripts/data_audit.py` 检查 CSV 样本结构并输出 data contract；`scripts/scaffold.py` 支持 Stata DiD/RDD 与 R DiD 骨架 |
+| Evidence / claim audit | 可用 | `scripts/evidence_pipeline.py` 支持 ledger、claim-audit、reviewer-gauntlet |
 | Stage 4 verify | 可用 | `scripts/robustness_checks.py` 静态扫描方法证据、空泛写作、因果过度声称和引用风险 |
 | Stage 5 paper/write | 可用 | `scripts/paper_pipeline.py` 支持 outline/audit；`scripts/session.py` 管理 manifest、CHANGELOG、版本和审稿意见 |
 | Docs | 可用 | `docs/` 提供 quickstart、CLI reference、agent runbook、agent integrations、skill loadout、quality gates 和目录说明 |
@@ -21,8 +23,9 @@
 1. **不重造轮子**：StatsPAI、Academic Research Skills、Stata skill、social-science skills 做得好的地方，本项目只做 adapter 和编排。
 2. **Agent 原生**：OpenCode、Claude Code、Codex、Cursor、Coze 等平台可以读取入口文件、加载配套 skills，并调用真实 Stata/R/Python、引用 API、MCP、数据库或文档工具。
 3. **Stata-first**：默认输出国内实证研究者熟悉的 Stata do-file，同时保留 R 的现代 DiD 生态。
-4. **可裁剪**：用户可以只跑 `identify` 或只跑 `verify`，不强迫完整五阶段。
-5. **质量闸门可解释**：verifier 只报告它看到的证据，不夸大成“引用真实”或“结果正确”。
+4. **证据优先**：核心 claim 必须能回到表图、代码、数据、模型、聚类层级和引用核验状态。
+5. **可裁剪**：用户可以只跑 `identify` 或只跑 `verify`，不强迫完整流程。
+6. **质量闸门可解释**：verifier 只报告它看到的证据，不夸大成“引用真实”或“结果正确”。
 
 ## 非目标
 
@@ -43,6 +46,7 @@ econ-paper-studio/
 ├── AGENTS.md
 ├── SKILL.md
 ├── skill_loadout.yaml
+├── research_skill_registry.yaml
 ├── agent_manifest.yaml
 ├── pyproject.toml
 ├── .cursor/
@@ -58,7 +62,6 @@ econ-paper-studio/
 │   ├── SKILL_LOADOUT.md
 │   ├── PROJECT_STRUCTURE.md
 │   ├── QUALITY_GATES.md
-│   └── REAL_WORLD_TRIALS.md
 ├── integrations/
 │   └── coze/econ-paper-studio-tool-schema.json
 ├── scripts/
@@ -69,6 +72,8 @@ econ-paper-studio/
 │   ├── scaffold.py
 │   ├── robustness_checks.py
 │   ├── paper_pipeline.py
+│   ├── skills.py
+│   ├── evidence_pipeline.py
 │   └── session.py
 ├── references/
 │   ├── anti_ai_phrases.md

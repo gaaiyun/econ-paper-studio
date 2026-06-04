@@ -14,14 +14,27 @@ econ-studio doctor --strict
 1. `AGENTS.md`
 2. `SKILL.md`
 3. `agent_manifest.yaml`
-4. `docs/SKILL_LOADOUT.md`
-5. `docs/UPSTREAM_SKILLS.md`
-6. `WORKFLOW.md`
-7. 目标 session 或目标论文目录里的 handoff / README / changelog
+4. `research_skill_registry.yaml`
+5. `docs/SKILL_LOADOUT.md`
+6. `docs/UPSTREAM_SKILLS.md`
+7. `WORKFLOW.md`
+8. 目标 session 或目标论文目录里的 handoff / README / changelog
 
 如果用户给了自己的数据目录或论文目录，先读那里的说明。不要先改文件。
 
 如果平台支持 skills，先按 `skill_loadout.yaml` 和 `docs/UPSTREAM_SKILLS.md` 加载上游技能包；如果不支持，就读取对应上游文档，并把缺失项写进交付说明。
+
+先跑一遍任务路由：
+
+```powershell
+econ-studio skills plan --task full-paper
+```
+
+如果要加载外部 skill 目录，先审计：
+
+```powershell
+econ-studio skills audit --dir path\to\upstream-skill
+```
 
 ## 1. 研究问题
 
@@ -51,6 +64,16 @@ econ-studio identify `
 - 剩余识别威胁是什么；
 - 哪些稳健性是必须补的。
 
+然后写识别设计 memo：
+
+```powershell
+econ-studio design-memo `
+  --brief path\to\research_brief.yaml `
+  --output outputs\<session>\design_memo.md
+```
+
+memo 是 agent 继续跑数据、模型和写作时的识别 contract。后续任何 claim 都要和这个 contract 保持一致。
+
 ## 3. 数据审计
 
 在任何回归前先跑：
@@ -69,6 +92,8 @@ econ-studio data-audit `
 
 critical failure 不要硬跑模型。先处理重复键、空样本、处理变量不变化、结果变量不是数值这类问题。
 
+报告里的 data contract 要保留到交付包里。它说明分析粒度、join explosion 风险、缺失边界、分母边界和聚类层级。
+
 ## 4. 生成代码骨架
 
 ```powershell
@@ -82,6 +107,29 @@ econ-studio scaffold `
 
 ## 5. 计量核验
 
+在核验前先建立 evidence ledger：
+
+```powershell
+econ-studio ledger init --ledger outputs\<session>\evidence_ledger.json
+```
+
+每生成一个表或图，就追加一条记录：
+
+```powershell
+econ-studio ledger add `
+  --ledger outputs\<session>\evidence_ledger.json `
+  --artifact-id table1 `
+  --title "Baseline estimates" `
+  --artifact-path tables\table1.tex `
+  --code-path do\03_main.do `
+  --data-source data\analysis_panel.csv `
+  --sample "analysis sample" `
+  --model "main specification" `
+  --estimand ATT `
+  --cluster unit_id `
+  --claim "core empirical claim"
+```
+
 ```powershell
 econ-studio verify `
   --strategy DiD `
@@ -92,6 +140,22 @@ econ-studio verify `
 ```
 
 `verify` 只检查脚本和文本中有没有证据钩子。它不跑 Stata/R，也不证明结果正确。
+
+然后跑：
+
+```powershell
+econ-studio claim-audit `
+  --paper path\to\draft.md `
+  --ledger outputs\<session>\evidence_ledger.json `
+  --output outputs\<session>\claim_audit.md
+
+econ-studio reviewer-gauntlet `
+  --paper path\to\draft.md `
+  --ledger outputs\<session>\evidence_ledger.json `
+  --output outputs\<session>\reviewer_gauntlet.md
+```
+
+claim audit 没支持的结论不要硬写。要么补表图和代码记录，要么把正文说法降级。
 
 ## 6. 论文写作
 
@@ -139,6 +203,7 @@ econ-studio promote <session> --version v2
 - 数据审计、方法核验和论文审计的报告路径已经写清楚；
 - 哪些模型真实运行过，哪些只是脚手架或待运行；
 - 哪些引用真实核验过，哪些还只是待核验；
+- 哪些 claim 已经能回到 evidence ledger，哪些还缺证据；
 - 交付稿没有把静态检查包装成实证结果。
 
 没有这些说明，就不要说完成。

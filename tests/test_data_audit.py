@@ -79,6 +79,33 @@ def test_render_report_includes_next_actions_for_failed_checks():
     assert "[FAIL]" in report
 
 
+def test_render_report_includes_data_contract_for_agent_execution():
+    df = pd.DataFrame(
+        {
+            "city_id": [1, 1, 2, 2],
+            "year": [2020, 2021, 2020, 2021],
+            "treated": [0, 1, 0, 1],
+            "employment": [0.52, 0.53, 0.55, 0.56],
+        }
+    )
+    result = audit_dataframe(
+        df,
+        source="inline",
+        key_columns=["city_id", "year"],
+        outcome="employment",
+        treatment="treated",
+        cluster="city_id",
+        min_clusters=2,
+    )
+
+    report = render_report(result)
+
+    assert "## Data Contract" in report
+    assert "Join explosion risk" in report
+    assert "Denominator boundary" in report
+    assert "Cluster level" in report
+
+
 def test_data_audit_cli_outputs_json_and_fail_on_critical(tmp_path):
     csv_path = tmp_path / "panel.csv"
     csv_path.write_text(

@@ -1,11 +1,11 @@
 # Econ Paper Studio
 
-面向实证经济学论文的 agent-native CLI / Skill 编排层。它把一篇经验研究拆成可检查的阶段：研究问题、识别策略、数据审计、代码骨架、稳健性核验、论文写作质检和版本记录。
+面向实证经济学论文的 agent-native CLI / Skill 编排层。它把一篇经验研究拆成可检查、可交接、可追证据的阶段：上游 skills 路由、研究问题、识别策略、数据审计、代码骨架、稳健性核验、论文写作质检、证据账本、claim audit 和审稿式检查。
 
 它不替研究者编造结果、引用或结论。它做的是把 agent 容易跳过的步骤固定下来：先说明问题和识别假设，再检查数据结构，再生成可复现代码，再核验方法证据和论文文本。
 
 ```text
-question -> design -> data-audit -> execute -> verify -> paper -> session
+skills -> question -> design -> data-contract -> execute -> evidence-ledger -> claim-audit -> reviewer-gauntlet -> paper -> session
 ```
 
 ## 当前可用
@@ -13,11 +13,16 @@ question -> design -> data-audit -> execute -> verify -> paper -> session
 | 阶段 | 命令 | 当前能力 |
 |---|---|---|
 | doctor | `econ-studio doctor --json` | 检查 Python 版本、关键文件、核心依赖和可选依赖 |
+| skills | `econ-studio skills plan --task full-paper` | 根据任务给 agent 输出应加载的上游 skills；也可审计本地 skill 目录风险 |
 | question | `econ-studio brainstorm` | 打开研究问题五问模板 |
 | design | `econ-studio identify --brief <brief.yaml>` | 根据 brief 推荐 DiD/RDD/IV/SCM/Matching/DML，并给出识别威胁和稳健性清单 |
-| data-audit | `econ-studio data-audit --csv <panel.csv> --key id --key year` | 检查空样本、重复键、缺失、处理变量变化、结果变量类型和聚类数量 |
+| design memo | `econ-studio design-memo --brief <brief.yaml>` | 把 brief 转成 estimand、识别假设、威胁和诊断要求 |
+| data-audit | `econ-studio data-audit --csv <panel.csv> --key id --key year` | 检查空样本、重复键、缺失、处理变量变化、结果变量类型和聚类数量，并输出 data contract |
 | execute | `econ-studio scaffold --strategy DiD --session <name> --lang stata` | 生成 Stata/R 分析骨架、表图目录和 replication-package 结构 |
 | verify | `econ-studio verify --strategy DiD --analysis outputs\<name> --paper draft.md` | 静态扫描方法稳健性证据、空泛写作短语、引用占位符和因果过度声称 |
+| evidence | `econ-studio ledger init/add/audit` | 记录表图、代码、数据、样本、模型、estimand、聚类层级和支持的 claim |
+| claim audit | `econ-studio claim-audit --paper draft.md --ledger evidence_ledger.json` | 把论文核心 claim 映射回表图/代码/数据证据 |
+| reviewer | `econ-studio reviewer-gauntlet --paper draft.md --ledger evidence_ledger.json` | 从方法、数据、引用、写作和复现五个视角做审稿式检查 |
 | paper | `econ-studio paper outline/audit` | 从 brief 生成论文大纲，或审计草稿结构、贡献句、引用风险和图表标题 |
 | session | `econ-studio init/list/show/add/add-review/promote` | 管理论文版本、审稿意见和终稿标记 |
 
@@ -30,9 +35,16 @@ python -m pip install -e .
 
 econ-studio doctor --json
 
+econ-studio skills plan `
+  --task full-paper
+
 econ-studio identify `
   --brief examples\case-min-wage-did\research_brief.yaml `
   --output outputs\min-wage-demo\identify_strategy.md
+
+econ-studio design-memo `
+  --brief examples\case-min-wage-did\research_brief.yaml `
+  --output outputs\min-wage-demo\design_memo.md
 
 econ-studio data-audit `
   --csv examples\case-min-wage-did\panel_sample.csv `
@@ -69,6 +81,33 @@ econ-studio paper audit `
   --paper examples\case-min-wage-did\draft_excerpt.md `
   --output outputs\min-wage-demo\paper_audit.md `
   --fail-under 8
+
+econ-studio ledger init `
+  --ledger outputs\min-wage-demo\evidence_ledger.json
+
+econ-studio ledger add `
+  --ledger outputs\min-wage-demo\evidence_ledger.json `
+  --artifact-id table1 `
+  --title "Baseline DiD estimates" `
+  --artifact-path tables\table1.tex `
+  --code-path do\03_main.do `
+  --data-source examples\case-min-wage-did\panel_sample.csv `
+  --sample "city-year panel" `
+  --model "two-way fixed effects DiD" `
+  --estimand ATT `
+  --cluster city_id `
+  --claim "Minimum wage changes affect youth employment" `
+  --status needs_verification
+
+econ-studio claim-audit `
+  --paper examples\case-min-wage-did\draft_excerpt.md `
+  --ledger outputs\min-wage-demo\evidence_ledger.json `
+  --output outputs\min-wage-demo\claim_audit.md
+
+econ-studio reviewer-gauntlet `
+  --paper examples\case-min-wage-did\draft_excerpt.md `
+  --ledger outputs\min-wage-demo\evidence_ledger.json `
+  --output outputs\min-wage-demo\reviewer_gauntlet.md
 ```
 
 如果没有安装 entry point，可以把 `econ-studio` 换成 `python scripts\cli.py`。
@@ -83,6 +122,7 @@ econ-studio paper audit `
 | [docs/AGENT_INTEGRATIONS.md](docs/AGENT_INTEGRATIONS.md) | Claude Code / OpenCode / Codex / Cursor / Coze 接入方式 |
 | [docs/SKILL_LOADOUT.md](docs/SKILL_LOADOUT.md) | 配套 skills 加载清单 |
 | [docs/UPSTREAM_SKILLS.md](docs/UPSTREAM_SKILLS.md) | 上游 skills 的安装、加载和使用顺序 |
+| [research_skill_registry.yaml](research_skill_registry.yaml) | 上游 skills 的机器可读任务路由 |
 | [docs/QUALITY_GATES.md](docs/QUALITY_GATES.md) | 投稿/交付前质量闸门 |
 | [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) | 项目目录和提交边界 |
 
@@ -97,6 +137,7 @@ econ-studio paper audit `
 | 数据先过结构闸门 | `data-audit` 先查重复键、缺失、处理变量变化和聚类数量，降低 join explosion 和分母错位风险 |
 | 方法和写作分开 | `identify/scaffold/verify` 管识别与代码，`paper outline/audit` 管论文结构、贡献句、引用和图表标题 |
 | Agent 原生 | OpenCode、Claude Code、Codex、Cursor、Coze 等平台可读取项目指令、加载配套 skills，并调用真实 Stata/R/Python、引用 API、MCP 或文档工具 |
+| 证据优先 | `ledger` 和 `claim-audit` 要求每条结论回到表图、代码、数据和引用核验状态 |
 
 ## 上游参考
 
@@ -111,7 +152,7 @@ econ-studio paper audit `
 | social-science methods skills | 把 DiD/RDD/IV 等方法要求转成可检查的证据项 |
 | research-writing / humanizer / academic-plotting skills | 固化为写作质检、去填充语、引用边界、图表标题和 reviewer-readiness 规则 |
 
-调用本项目的 agent 应按 [docs/UPSTREAM_SKILLS.md](docs/UPSTREAM_SKILLS.md) 部署或加载这些上游 skills。上游仓库只作为外部 skill 来源，不复制进本仓库。
+调用本项目的 agent 应先运行 `econ-studio skills plan --task full-paper`，再按 [docs/UPSTREAM_SKILLS.md](docs/UPSTREAM_SKILLS.md) 部署或加载这些上游 skills。上游仓库只作为外部 skill 来源，不复制进本仓库。
 
 ## 质量闸门边界
 

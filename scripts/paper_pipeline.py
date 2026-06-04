@@ -150,6 +150,71 @@ def _caption_check(text: str) -> CheckResult:
     )
 
 
+def _vague_attribution_check(text: str) -> CheckResult:
+    patterns = [
+        r"\bmany scholars\b",
+        r"\bthe literature generally\b",
+        r"\bprevious studies suggest\b",
+        r"许多学者",
+        r"已有研究普遍",
+    ]
+    hit = next((match.group(0) for pattern in patterns if (match := re.search(pattern, text, re.I))), None)
+    return _check(
+        "writing.vague_attribution",
+        "Attribution is specific enough to verify",
+        "medium",
+        hit is None,
+        hit or "No vague attribution marker found.",
+        "Replace vague attribution with named, verified sources or remove the unsupported setup.",
+    )
+
+
+def _promotional_language_check(text: str) -> CheckResult:
+    patterns = [
+        r"\bhighly significant\b",
+        r"\btransformative\b",
+        r"\bgroundbreaking\b",
+        r"\bimportant topic\b",
+        r"重大意义",
+        r"极其重要",
+        r"突破性",
+    ]
+    hits = [match.group(0) for pattern in patterns if (match := re.search(pattern, text, re.I))]
+    return _check(
+        "writing.promotional_language",
+        "Prose avoids promotional emphasis",
+        "medium",
+        not hits,
+        ", ".join(hits[:5]) if hits else "No promotional language marker found.",
+        "Replace promotional emphasis with concrete design facts, estimates, uncertainty, or limitations.",
+    )
+
+
+def _claim_evidence_marker_check(text: str) -> CheckResult:
+    claims = re.findall(r"(?i)(?:^|\b)(?:claim|结论|主张)\s*[:：]\s*([^\n]+)", text)
+    if not claims:
+        return _check(
+            "writing.claim_evidence_marker",
+            "Explicit claims are marked for evidence audit",
+            "medium",
+            True,
+            "No explicit Claim: markers found.",
+            "Use Claim: markers for core empirical claims when running claim-audit.",
+        )
+    has_evidence_marker = any(
+        re.search(r"(?i)\b(table|figure|appendix|ledger|evidence)\b|表\s*\d|图\s*\d", claim)
+        for claim in claims
+    )
+    return _check(
+        "writing.claim_evidence_marker",
+        "Explicit claims have nearby evidence markers",
+        "high",
+        has_evidence_marker,
+        f"{len(claims)} explicit claims; evidence marker {'found' if has_evidence_marker else 'missing'}",
+        "Attach each explicit claim to a table, figure, appendix item, or evidence-ledger entry.",
+    )
+
+
 def audit_paper(paper_path: str | Path) -> PaperAuditResult:
     path = Path(paper_path)
     checks: list[CheckResult] = [
@@ -170,6 +235,9 @@ def audit_paper(paper_path: str | Path) -> PaperAuditResult:
     checks.append(_section_check(text))
     checks.append(_contribution_check(text))
     checks.append(_caption_check(text))
+    checks.append(_vague_attribution_check(text))
+    checks.append(_promotional_language_check(text))
+    checks.append(_claim_evidence_marker_check(text))
     checks.extend(scan_anti_ai_phrases([path]))
     checks.extend(scan_citation_risks([path]))
     checks.extend(scan_causal_overclaims([path]))

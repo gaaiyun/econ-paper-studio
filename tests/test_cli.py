@@ -33,7 +33,8 @@ def test_project_root_above_scripts():
 
 def test_subcommands_dict_keys():
     expected = {"doctor", "identify", "scaffold", "session", "init", "list",
-                "show", "add", "promote", "data-audit", "verify", "paper"}
+                "show", "add", "promote", "data-audit", "verify", "paper",
+                "skills", "design-memo", "ledger", "claim-audit", "reviewer-gauntlet"}
     assert expected <= set(SUBCOMMANDS.keys())
 
 
@@ -182,6 +183,18 @@ def test_cli_subprocess_paper_help():
     proc = _run_cli(["paper", "--help"])
     assert proc.returncode == 0
     assert "outline" in proc.stdout.lower()
+
+
+def test_cli_subprocess_skills_help():
+    proc = _run_cli(["skills", "--help"])
+    assert proc.returncode == 0
+    assert "plan" in proc.stdout.lower()
+
+
+def test_cli_subprocess_design_memo_help():
+    proc = _run_cli(["design-memo", "--help"])
+    assert proc.returncode == 0
+    assert "brief" in proc.stdout.lower()
 
 
 def test_cli_subprocess_doctor_json():

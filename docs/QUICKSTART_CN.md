@@ -21,10 +21,20 @@ econ-studio doctor --strict
 
 ## 3. 识别策略
 
+先让 agent 知道这一类任务该加载哪些上游 skills：
+
+```powershell
+econ-studio skills plan --task full-paper
+```
+
 ```powershell
 econ-studio identify `
   --brief examples\case-min-wage-did\research_brief.yaml `
   --output outputs\min-wage-demo\identify_strategy.md
+
+econ-studio design-memo `
+  --brief examples\case-min-wage-did\research_brief.yaml `
+  --output outputs\min-wage-demo\design_memo.md
 ```
 
 预期：DiD 排在第一，并列出平行趋势、错时 DiD、安慰剂和多重检验等必查项。
@@ -48,7 +58,7 @@ econ-studio data-audit `
   --fail-on-critical
 ```
 
-预期：score 为 10.0。真实研究不要把 `--min-clusters 3` 当标准；这里是为了让 toy fixture 通过。
+预期：score 为 10.0，并输出 data contract。真实研究不要把 `--min-clusters 3` 当标准；这里是为了让 toy fixture 通过。
 
 ## 5. 生成 Stata 骨架
 
@@ -63,6 +73,27 @@ econ-studio scaffold `
 
 ## 6. 稳健性与写作静态核验
 
+先建立证据账本，后续真实表图都要追加记录：
+
+```powershell
+econ-studio ledger init `
+  --ledger outputs\min-wage-demo\evidence_ledger.json
+
+econ-studio ledger add `
+  --ledger outputs\min-wage-demo\evidence_ledger.json `
+  --artifact-id table1 `
+  --title "Baseline DiD estimates" `
+  --artifact-path tables\table1.tex `
+  --code-path do\03_main.do `
+  --data-source examples\case-min-wage-did\panel_sample.csv `
+  --sample "city-year panel" `
+  --model "two-way fixed effects DiD" `
+  --estimand ATT `
+  --cluster city_id `
+  --claim "Minimum wage changes affect youth employment" `
+  --status needs_verification
+```
+
 ```powershell
 econ-studio verify `
   --strategy DiD `
@@ -73,6 +104,20 @@ econ-studio verify `
 ```
 
 预期：生成 `verify_report.md`。这一步不跑真实回归，只检查代码和文本里的证据钩子。
+
+继续检查论文 claim 是否能回到 evidence ledger：
+
+```powershell
+econ-studio claim-audit `
+  --paper examples\case-min-wage-did\draft_excerpt.md `
+  --ledger outputs\min-wage-demo\evidence_ledger.json `
+  --output outputs\min-wage-demo\claim_audit.md
+
+econ-studio reviewer-gauntlet `
+  --paper examples\case-min-wage-did\draft_excerpt.md `
+  --ledger outputs\min-wage-demo\evidence_ledger.json `
+  --output outputs\min-wage-demo\reviewer_gauntlet.md
+```
 
 ## 7. 论文大纲与草稿质检
 

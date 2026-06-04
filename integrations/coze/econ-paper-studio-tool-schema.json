@@ -7,7 +7,22 @@
     "properties": {
       "command": {
         "type": "string",
-        "enum": ["doctor", "identify", "data_audit", "verify", "paper_outline", "paper_audit"],
+        "enum": [
+          "doctor",
+          "skills_plan",
+          "skills_audit",
+          "identify",
+          "design_memo",
+          "data_audit",
+          "ledger_init",
+          "ledger_add",
+          "ledger_audit",
+          "verify",
+          "claim_audit",
+          "reviewer_gauntlet",
+          "paper_outline",
+          "paper_audit"
+        ],
         "description": "Allowed econ-paper-studio action."
       },
       "workspace_id": {
@@ -18,9 +33,62 @@
         "type": "string",
         "description": "Path to a research brief inside the allowed workspace."
       },
+      "task": {
+        "type": "string",
+        "enum": ["full-paper", "literature", "design", "execute", "audit", "write", "review", "submit"],
+        "description": "Task name for skills_plan."
+      },
+      "skill_dir": {
+        "type": "string",
+        "description": "Path to a mounted upstream skill directory inside the allowed workspace or runner reference area."
+      },
       "csv_path": {
         "type": "string",
         "description": "Path to a CSV analysis file inside the allowed workspace."
+      },
+      "ledger_path": {
+        "type": "string",
+        "description": "Path to an evidence ledger JSON file inside the allowed workspace."
+      },
+      "artifact_id": {
+        "type": "string",
+        "description": "Evidence ledger artifact id for ledger_add."
+      },
+      "artifact_path": {
+        "type": "string",
+        "description": "Table or figure path inside the allowed workspace."
+      },
+      "artifact_title": {
+        "type": "string",
+        "description": "Human-readable table or figure title for the evidence ledger."
+      },
+      "code_path": {
+        "type": "string",
+        "description": "Script path that generated the artifact."
+      },
+      "data_source": {
+        "type": "string",
+        "description": "Data source or snapshot recorded in the evidence ledger."
+      },
+      "sample": {
+        "type": "string",
+        "description": "Analysis sample recorded in the evidence ledger."
+      },
+      "model": {
+        "type": "string",
+        "description": "Model or specification recorded in the evidence ledger."
+      },
+      "estimand": {
+        "type": "string",
+        "description": "Estimand recorded in the evidence ledger."
+      },
+      "cluster": {
+        "type": "string",
+        "description": "Cluster level recorded in the evidence ledger or used for data_audit."
+      },
+      "claim": {
+        "type": "string",
+        "description": "Claim supported by a ledger artifact."
       },
       "analysis_path": {
         "type": "string",

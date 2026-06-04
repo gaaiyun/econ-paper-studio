@@ -5,7 +5,7 @@ description: End-to-end empirical economics research workflow — from research 
 
 # Econ Paper Studio
 
-End-to-end empirical economics workflow. Five stages: question → design → execute → verify → write. Chinese-friendly. Stata-first.
+End-to-end empirical economics workflow. Stages: skills → question → design → data contract → execute → evidence ledger → claim audit → reviewer gauntlet → write. Chinese-friendly. Stata-first.
 
 > **WORKFLOW.md** is the single source of truth for the five-stage pipeline. This file is the Cursor/Claude Code skill entry that describes activation conditions and routing rules.
 
@@ -26,7 +26,7 @@ When the platform has these skills available, load them before doing substantive
 Detailed purpose, fallback behavior, and upstream installation guidance are documented in `docs/SKILL_LOADOUT.md` and `docs/UPSTREAM_SKILLS.md`.
 The same loadout is also available as machine-readable metadata in `skill_loadout.yaml`.
 
-Do not treat missing companion skills as a reason to stop. Fall back to the local CLI gates: `doctor`, `identify`, `data-audit`, `scaffold`, `verify`, `paper audit`, and `session`.
+Do not treat missing companion skills as a reason to stop. Fall back to the local CLI gates: `doctor`, `skills plan`, `identify`, `design-memo`, `data-audit`, `scaffold`, `ledger`, `verify`, `claim-audit`, `reviewer-gauntlet`, `paper audit`, and `session`.
 
 ## When to Use This Skill
 
@@ -57,7 +57,18 @@ No:
 
 Default is **quick mode**. Switch to full when the brief has fewer than 3 of {research question, identification strategy, data, target journal, expected contribution}.
 
-## The Five Stages
+## The Core Stages
+
+### Stage 0: skills (upstream routing and safety)
+
+**Tool**: `scripts/skills.py`
+
+```bash
+python scripts/skills.py plan --task full-paper
+python scripts/skills.py audit --dir _references/upstream-skills/some-skill
+```
+
+Use `plan` before substantial work so the agent knows which upstream skills to load for literature, design, execution, writing, claim audit, review, and submission. Use `audit` before loading a third-party skill directory; it checks for missing `SKILL.md`, network calls, environment/secret access, SSH key patterns, and browser-data access.
 
 ### Stage 1: question (research question clarification)
 
@@ -84,6 +95,12 @@ python scripts/identify_strategy.py --brief research_brief.yaml
 
 Outputs `strategy_recommendation.md` with primary method, alternatives, ≥3 literature benchmarks, robustness checklist, and StatsPAI function call preview.
 
+Then render the identification contract:
+
+```bash
+python scripts/evidence_pipeline.py design-memo --brief research_brief.yaml --output design_memo.md
+```
+
 ### Stage 3: data-audit + execute
 
 **Tool**: `scripts/data_audit.py` first, then `scripts/scaffold.py`.
@@ -104,6 +121,30 @@ python scripts/scaffold.py --strategy DiD --session my-paper --lang stata
 - `01_clean` / `02_descriptive` / `03_main` — core empirical workflow
 - `04_robustness` / `05_heterogeneity` / `99_export` — checks and paper outputs
 - `data/`, `tables/`, `figures/`, `robustness/` — replication package structure
+
+The data-audit report now includes a data contract: analysis grain, join explosion risk, denominator boundary, missingness boundary, cluster level, and claim boundary.
+
+### Stage 3.5: evidence ledger
+
+**Tool**: `scripts/evidence_pipeline.py ledger`
+
+```bash
+python scripts/evidence_pipeline.py ledger init --ledger evidence_ledger.json
+python scripts/evidence_pipeline.py ledger add --ledger evidence_ledger.json \
+  --artifact-id table1 \
+  --title "Baseline DiD estimates" \
+  --artifact-path tables/table1.tex \
+  --code-path do/03_main.do \
+  --data-source data/analysis_panel.csv \
+  --sample "city-year panel" \
+  --model "two-way fixed effects DiD" \
+  --estimand ATT \
+  --cluster city_id \
+  --claim "Minimum wage changes affect youth employment"
+python scripts/evidence_pipeline.py ledger audit --ledger evidence_ledger.json
+```
+
+Every table and figure that supports a paper claim should have a ledger row.
 
 ### Stage 4: verify (robustness + audit)
 
@@ -134,6 +175,15 @@ python scripts/session.py promote my-paper --version v2
 ```
 
 `paper_pipeline.py` checks core sections, explicit contribution, obvious citation placeholders, causal overclaim risk, filler phrases, and figure/table caption quality. It does not verify that a citation exists or supports a claim. `session.py` maintains `manifest.json` + `CHANGELOG.md` per session.
+
+Before treating a draft as ready, run:
+
+```bash
+python scripts/evidence_pipeline.py claim-audit --paper draft.md --ledger evidence_ledger.json
+python scripts/evidence_pipeline.py reviewer-gauntlet --paper draft.md --ledger evidence_ledger.json
+```
+
+`claim-audit` maps explicit `Claim:` statements back to evidence-ledger entries. `reviewer-gauntlet` applies five views: Method Reviewer, Data Auditor, Citation Auditor, Writing/Humanizer, and Replication Editor.
 
 ## Things That Must Survive Compilation
 
@@ -170,6 +220,7 @@ If those skills are not installed, this skill still works in "standalone mode" b
 | `README.md` | Project intro |
 | `AGENTS.md` | Generic agent instructions for Codex, Cursor, OpenCode, and similar agents |
 | `skill_loadout.yaml` | Machine-readable companion skill list |
+| `research_skill_registry.yaml` | Machine-readable upstream skill routing by research phase |
 | `agent_manifest.yaml` | Platform entrypoints and safe command mapping |
 | `PROJECT_PLAN.md` | Full task breakdown |
 | `WORKFLOW.md` | Five-stage workflow detail |
@@ -180,7 +231,7 @@ If those skills are not installed, this skill still works in "standalone mode" b
 | `docs/CLI_REFERENCE.md` | Command reference |
 | `docs/QUALITY_GATES.md` | Pre-delivery gates |
 | `docs/PROJECT_STRUCTURE.md` | Directory layout and commit boundaries |
-| `docs/REAL_WORLD_TRIALS.md` | Real project trials and known boundaries |
+| `examples/` | Public toy cases for agent smoke runs and workflow demos |
 | `RESEARCH_QUESTION.md` | Stage 1 template |
 | `INSTALL_CN.md` | Chinese install guide |
 | `scripts/identify_strategy.py` | Stage 2 strategy selector |
@@ -188,6 +239,8 @@ If those skills are not installed, this skill still works in "standalone mode" b
 | `scripts/scaffold.py` | Stage 3 Stata/R scaffold generator |
 | `scripts/robustness_checks.py` | Stage 4 static verifier for method evidence and writing risks |
 | `scripts/paper_pipeline.py` | Stage 5 paper outline and writing-quality audit |
+| `scripts/skills.py` | Upstream skill routing and local skill safety audit |
+| `scripts/evidence_pipeline.py` | Design memo, evidence ledger, claim audit, and reviewer gauntlet |
 | `scripts/session.py` | Stage 5 paper session manager |
 | `scripts/cli.py` | Unified `econ-studio` entry |
 | `references/` | Methods + anti-AI phrase references |
@@ -200,4 +253,4 @@ If those skills are not installed, this skill still works in "standalone mode" b
 - **Optional**: Volcengine ARK_API_KEY for vision-based table verification
 - **Optional**: Semantic Scholar API key for citation validation (free tier OK)
 
-This skill is at version **0.2.1**. The CLI gates are runnable; external citation verification and real Stata/R/Python execution remain explicit live-tool steps.
+This skill is at version **0.3.0**. The CLI gates are runnable; external citation verification and real Stata/R/Python execution remain explicit live-tool steps.

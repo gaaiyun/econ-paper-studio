@@ -23,6 +23,20 @@ econ-studio doctor --json
 
 `--strict` 会在 required check 失败时返回非零退出码，适合交付前检查。
 
+## skills
+
+给 agent 输出本轮任务应加载的上游 skills，或审计本地第三方 skill 目录。
+
+```powershell
+econ-studio skills plan --task full-paper
+econ-studio skills plan --task review --json
+econ-studio skills audit --dir _references\upstream-skills\some-skill
+```
+
+常用 task：`full-paper`、`literature`、`design`、`execute`、`audit`、`write`、`review`、`submit`。
+
+`skills audit` 会检查 `SKILL.md` 是否存在，以及脚本中是否出现网络调用、环境变量/secret 读取、SSH key、浏览器数据等风险信号。它不会判断上游仓库一定安全；它只是让 agent 在加载前先把风险说清楚。
+
 ## brainstorm
 
 打印研究问题模板。
@@ -45,6 +59,18 @@ econ-studio identify `
 
 输出包含推荐策略、理由、关键文献基准和必须补的稳健性。
 
+## design-memo
+
+把 research brief 转成识别设计备忘录。
+
+```powershell
+econ-studio design-memo `
+  --brief research_brief.yaml `
+  --output outputs\my-paper\design_memo.md
+```
+
+输出包含 research question、estimand、样本单位、时间单位、处理变量、结果变量、识别假设、威胁和必须诊断。它不替代 `identify`，而是把识别设计写成 agent 和研究者都能复查的 contract。
+
 ## data-audit
 
 审计 CSV 分析样本。
@@ -62,6 +88,8 @@ econ-studio data-audit `
   --output outputs\my-paper\data_audit.md `
   --fail-on-critical
 ```
+
+报告会包含 data contract：分析粒度、join explosion 风险、缺失边界、分母边界、聚类层级和 claim 边界。
 
 常用参数：
 
@@ -101,6 +129,58 @@ econ-studio verify `
 
 它会检查方法证据、空泛填充语、引用占位符和因果过度声称。它不跑真实回归。
 
+## ledger
+
+管理证据账本。每个支持论文结论的表或图都应该有一条记录。
+
+```powershell
+econ-studio ledger init --ledger outputs\my-paper\evidence_ledger.json
+
+econ-studio ledger add `
+  --ledger outputs\my-paper\evidence_ledger.json `
+  --artifact-id table1 `
+  --title "Baseline DiD estimates" `
+  --artifact-path tables\table1.tex `
+  --code-path do\03_main.do `
+  --data-source data\analysis_panel.csv `
+  --sample "city-year panel" `
+  --model "two-way fixed effects DiD" `
+  --estimand ATT `
+  --cluster city_id `
+  --claim "Minimum wage changes affect youth employment" `
+  --status needs_verification
+
+econ-studio ledger audit --ledger outputs\my-paper\evidence_ledger.json
+```
+
+ledger 记录的是证据位置和执行口径，不会自己生成回归结果。
+
+## claim-audit
+
+把论文草稿里的显式 `Claim:` 结论映射回 evidence ledger。
+
+```powershell
+econ-studio claim-audit `
+  --paper paper\draft.md `
+  --ledger outputs\my-paper\evidence_ledger.json `
+  --output outputs\my-paper\claim_audit.md
+```
+
+如果 claim 找不到表图、代码、数据和模型记录，就应补 ledger、补结果，或把正文说法降级。
+
+## reviewer-gauntlet
+
+从五个审稿视角检查草稿和证据账本。
+
+```powershell
+econ-studio reviewer-gauntlet `
+  --paper paper\draft.md `
+  --ledger outputs\my-paper\evidence_ledger.json `
+  --output outputs\my-paper\reviewer_gauntlet.md
+```
+
+五个视角是 Method Reviewer、Data Auditor、Citation Auditor、Writing/Humanizer、Replication Editor。
+
 ## paper outline
 
 从 brief 生成论文大纲。
@@ -124,7 +204,7 @@ econ-studio paper audit `
   --fail-under 8
 ```
 
-它会检查核心章节、贡献句、引用占位符、因果声称、填充语和图表标题。
+它会检查核心章节、贡献句、引用占位符、因果声称、填充语、vague attribution、promotional language、显式 claim 是否有证据标记，以及图表标题。
 
 ## session
 

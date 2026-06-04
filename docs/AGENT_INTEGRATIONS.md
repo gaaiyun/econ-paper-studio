@@ -9,6 +9,7 @@
 | `AGENTS.md` | Codex、Cursor、OpenCode、其他通用 coding agents | 项目级指令 |
 | `SKILL.md` | Claude Code、Claude-compatible skills | 主 skill 入口 |
 | `skill_loadout.yaml` | agent / runner / orchestration script | 配套 skills 的机器可读清单 |
+| `research_skill_registry.yaml` | agent / runner / orchestration script | 按研究阶段路由上游 skills |
 | `agent_manifest.yaml` | 平台集成和工具封装 | 各平台入口和命令映射 |
 | `docs/AGENT_RUNBOOK.md` | 长任务接手 | 从研究问题到交付验证的流程 |
 | `docs/UPSTREAM_SKILLS.md` | 上游 skills | 部署、加载和使用外部技能包 |
@@ -129,9 +130,17 @@ integrations/coze/econ-paper-studio-tool-schema.json
 runner 服务只允许这些命令：
 
 - `doctor`
+- `skills_plan`
+- `skills_audit`
 - `identify`
+- `design_memo`
 - `data_audit`
 - `verify`
+- `ledger_init`
+- `ledger_add`
+- `ledger_audit`
+- `claim_audit`
+- `reviewer_gauntlet`
 - `paper_outline`
 - `paper_audit`
 
@@ -144,6 +153,7 @@ runner 服务只允许这些命令：
 3. runner 返回 Markdown report 和 artifact URL。
 4. Coze 把报告摘要给用户，并把完整报告链接出来。
 5. 如果需要联网引用核验，runner 侧接 Crossref/OpenAlex/Semantic Scholar，不让 Coze 模型凭空补引用。
+6. 如果调用 `ledger_add`，runner 必须把路径限制在允许 workspace 内，并返回更新后的 ledger 摘要。
 
 Coze 官方 API 文档要求 workflow 已发布后才能执行；调用时传 `workflow_id`、`parameters`，并用 bearer token 做鉴权。这个限制意味着：本项目的 Coze 接入应设计成“发布后的 workflow 调用 runner”，不是让模型直接访问本地仓库。
 
@@ -156,6 +166,7 @@ Coze 官方 API 文档要求 workflow 已发布后才能执行；调用时传 `w
 3. 能联网核验引用就联网核验，不能联网就标记为“待核验”，不要编。
 4. 能跑 Stata/R/Python 就实际跑，不能跑就标记为“未执行”，不要把模板当结果。
 5. 结束前跑 `doctor`、paper/data/verify gates，并写清未执行或待核验的项目。
+6. 论文核心结论要跑 `claim-audit`，不能只靠模型觉得“说得通”。
 
 ## 官方参考
 

@@ -24,10 +24,11 @@
 |---|---|
 | `README.md` | 项目简介和最小可运行路径 |
 | `INSTALL_CN.md` | Windows / PowerShell 安装说明 |
-| `WORKFLOW.md` | 五阶段研究流程 |
+| `WORKFLOW.md` | 计量论文 agent 工作流 |
 | `AGENTS.md` | 通用 agent 项目指令 |
 | `SKILL.md` | Claude/Cursor/Codex skill 入口 |
 | `skill_loadout.yaml` | 配套 skills 的机器可读清单 |
+| `research_skill_registry.yaml` | 上游 skills 的任务路由和阶段映射 |
 | `agent_manifest.yaml` | 平台入口和命令映射 |
 | `RESEARCH_QUESTION.md` | 研究问题模板 |
 | `PROJECT_PLAN.md` | 当前状态和路线图 |
@@ -55,6 +56,8 @@
 | `scaffold.py` | `econ-studio scaffold` | 生成 Stata/R 分析骨架 |
 | `robustness_checks.py` | `econ-studio verify` | 方法、写作和引用静态核验 |
 | `paper_pipeline.py` | `econ-studio paper` | 论文大纲和草稿质检 |
+| `skills.py` | `econ-studio skills` | 上游 skills 路由和安全审计 |
+| `evidence_pipeline.py` | `econ-studio design-memo/ledger/claim-audit/reviewer-gauntlet` | 识别 memo、证据账本、claim audit 和审稿式检查 |
 | `session.py` | `econ-studio init/list/add/...` | 论文 session 和版本管理 |
 
 ## examples/

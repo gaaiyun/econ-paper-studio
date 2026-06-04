@@ -2,7 +2,7 @@
 
 `econ-paper-studio` 本身是一个编排 skill。它能独立运行，但如果要让 agent 真正接手“计量执行 + 论文写作 + 引用边界 + 交付核验”，建议同时加载下面这些 skills。
 
-同一份清单也放在根目录的 `skill_loadout.yaml`。人读这份文档，agent 或脚本可以读 YAML。平台入口和安全命令映射放在 `AGENTS.md` 与 `agent_manifest.yaml`。上游安装和来源看 `docs/UPSTREAM_SKILLS.md`。
+同一份清单也放在根目录的 `skill_loadout.yaml`。人读这份文档，agent 或脚本可以读 YAML。任务级路由放在 `research_skill_registry.yaml`，可用 `econ-studio skills plan --task full-paper` 输出。平台入口和安全命令映射放在 `AGENTS.md` 与 `agent_manifest.yaml`。上游安装和来源看 `docs/UPSTREAM_SKILLS.md`。
 
 ## 加载顺序
 
@@ -29,6 +29,9 @@
 | `Auto-Empirical-Research-Skills` | 上游导航，帮助 agent 找到经验研究任务所需技能 |
 | `StatsPAI` | 计量函数、因果推断 API、Stata/R 结果对照 |
 | `academic-research-skills` | 论文流程、文献组织、review/revise/finalize |
+| `K-Dense Scientific Agent Skills` | 借鉴开放 scientific skills 的结构、风险边界和多步研究工作流 |
+| `OpenJudge paper-review` | 借鉴多阶段审稿视角，转成 reviewer gauntlet |
+| `Awesome Econ AI Stuff` | 经济学 AI 工具和 skills 搜索入口 |
 | `obra/superpowers` | 技能路由、执行计划、系统排错、完成前核验 |
 | `stata-skill` | Stata do-file、社区包、数据管理和图表导出 |
 | `claude-code-skills-social-science` | DiD/RDD/IV 等社会科学方法纪律 |
@@ -48,6 +51,9 @@
 | `scripts/scaffold.py` | Stata/R 参考 + 计量执行 |
 | `scripts/robustness_checks.py` | `verification-before-completion` + 方法稳健性 |
 | `scripts/paper_pipeline.py` | `content-research-writer` + `humanizer` + citation boundary |
+| `scripts/skills.py` | 上游 skills 任务路由和本地 skill 风险审计 |
+| `scripts/evidence_pipeline.py` | design memo、evidence ledger、claim audit、reviewer gauntlet |
+| `research_skill_registry.yaml` | literature/design/execute/write/review/submit 阶段的 skill 映射 |
 | `references/writing_quality_protocol.md` | 去空话、贡献句、引用边界、图表标题 |
 | `references/data_validation_protocol.md` | 数据结构审计和并表风险 |
 | `AGENTS.md` / `agent_manifest.yaml` | 平台入口、接手顺序和命令边界 |
@@ -66,7 +72,8 @@
 当用户说“用 econ-paper-studio 接手论文/计量项目”时，agent 应先做三件事：
 
 1. 读 `AGENTS.md`、`SKILL.md`、`agent_manifest.yaml`、`WORKFLOW.md`、`docs/AGENT_RUNBOOK.md`。
-2. 按 `docs/UPSTREAM_SKILLS.md` 部署、定位或加载上游 skills。
-3. 跑 `econ-studio doctor --strict`，确认本地入口和依赖可用。
+2. 跑 `econ-studio skills plan --task full-paper`，确认上游 skills 路由。
+3. 按 `docs/UPSTREAM_SKILLS.md` 部署、定位或加载上游 skills，并对本地第三方 skill 目录跑 `skills audit`。
+4. 跑 `econ-studio doctor --strict`，确认本地入口和依赖可用。
 
 之后再开始改数据、跑模型或写论文。不要跳过数据审计，也不要在没有来源核验时补引用。
