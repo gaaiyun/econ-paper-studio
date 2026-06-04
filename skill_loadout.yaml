@@ -57,8 +57,8 @@ external_references:
   - name: "AI-research-SKILLs/academic-plotting"
     role: "Publication-quality plots, vector output, uncertainty display, captions, and table standards."
 upstream_skill_sources:
-  - name: "Awesome-Agent-Skills-for-Empirical-Research"
-    source: "https://github.com/brycewang-stanford/Awesome-Agent-Skills-for-Empirical-Research"
+  - name: "Auto-Empirical-Research-Skills"
+    source: "https://github.com/brycewang-stanford/Auto-Empirical-Research-Skills"
     role: "Upstream navigation for empirical research skills."
   - name: "StatsPAI"
     source: "https://github.com/brycewang-stanford/StatsPAI"

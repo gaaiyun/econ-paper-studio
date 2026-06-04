@@ -2,10 +2,10 @@
 """
 robustness_checks.py - stage 4 static verification.
 
-The verifier is intentionally offline-first. It does not claim to prove that an
-estimate is correct or that a citation supports a claim. It checks whether the
-analysis package and paper draft contain the minimum evidence hooks a reviewer
-will expect: method-specific robustness code, cluster/weak-IV/bandwidth checks,
+The verifier is a static gate. It does not claim to prove that an estimate is
+correct or that a citation supports a claim. It checks whether the analysis
+package and paper draft contain the minimum evidence hooks a reviewer will
+expect: method-specific robustness code, cluster/weak-IV/bandwidth checks,
 anti-AI prose flags, and obvious citation placeholders.
 """
 from __future__ import annotations
@@ -479,7 +479,7 @@ def render_report(result: VerificationResult) -> str:
         "",
         "## Scope Note",
         "",
-        "This is an offline static verifier. It checks for evidence hooks in code and prose; it does not validate numerical correctness or prove that cited papers support the claims.",
+        "This is a static verifier. It checks for evidence hooks in code and prose; it does not validate numerical correctness or prove that cited papers support the claims.",
     ])
     return "\n".join(lines)
 
@@ -492,7 +492,7 @@ def _print_text(text: str) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run offline robustness, writing, and citation checks.")
+    parser = argparse.ArgumentParser(description="Run static robustness, writing, and citation checks.")
     parser.add_argument("--strategy", required=True, choices=["DiD", "RDD", "IV", "SCM", "PSM", "Matching", "DML"])
     parser.add_argument("--analysis", required=True, help="Analysis/session directory to scan")
     parser.add_argument("--paper", action="append", default=[], help="Optional paper draft (.md/.tex/.txt)")

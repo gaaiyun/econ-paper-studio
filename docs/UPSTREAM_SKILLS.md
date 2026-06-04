@@ -14,7 +14,7 @@
 
 | 顺序 | 上游 | 用在本项目哪里 | Agent 应该怎么用 |
 |---:|---|---|---|
-| 1 | Awesome Agent Skills for Empirical Research | 上游导航 | 先查经验研究任务应调用哪些社会科学技能 |
+| 1 | Auto-Empirical Research Skills（原 Awesome Agent Skills for Empirical Research） | 上游导航 | 先查经验研究任务应调用哪些社会科学技能 |
 | 2 | obra/superpowers | 流程纪律 | 先选技能、写计划、系统排错、完成前核验证据 |
 | 3 | StatsPAI | 计量执行 | 查因果推断和应用计量函数，必要时与 Stata/R 输出对照 |
 | 4 | Academic Research Skills | 论文 pipeline | research -> write -> review -> revise -> finalize |
@@ -63,7 +63,7 @@ Coze 不应直接拿 shell 去安装任意仓库。正确方式是 runner 侧预
 
 | 上游 | 来源 |
 |---|---|
-| Awesome Agent Skills for Empirical Research | `https://github.com/brycewang-stanford/Awesome-Agent-Skills-for-Empirical-Research` |
+| Auto-Empirical Research Skills（原 Awesome Agent Skills for Empirical Research） | `https://github.com/brycewang-stanford/Auto-Empirical-Research-Skills` |
 | StatsPAI | `https://github.com/brycewang-stanford/StatsPAI` |
 | Academic Research Skills | `https://github.com/Imbad0202/academic-research-skills` |
 | obra/superpowers | `https://github.com/obra/superpowers` |

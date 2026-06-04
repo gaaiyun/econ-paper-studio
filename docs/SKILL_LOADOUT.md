@@ -26,7 +26,7 @@
 
 | 资料 | 用法 |
 |---|---|
-| `Awesome-Agent-Skills-for-Empirical-Research` | 上游导航，帮助 agent 找到经验研究任务所需技能 |
+| `Auto-Empirical-Research-Skills` | 上游导航，帮助 agent 找到经验研究任务所需技能 |
 | `StatsPAI` | 计量函数、因果推断 API、Stata/R 结果对照 |
 | `academic-research-skills` | 论文流程、文献组织、review/revise/finalize |
 | `obra/superpowers` | 技能路由、执行计划、系统排错、完成前核验 |
