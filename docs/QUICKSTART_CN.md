@@ -1,12 +1,12 @@
 # 快速开始
 
-这条路径用于确认项目真的能跑。它使用仓库里的 toy fixture，不需要 Stata、R、LLM API key 或网络。
+这条路径用于用仓库里的 toy fixture 跑通完整流程。真实研究仍要替换成自己的数据、代码和文稿。
 
 ## 1. 安装
 
 ```powershell
-cd "G:\github_project_0516\econ-paper-studio"
-python -m pip install -e ".[dev]"
+cd "<path-to-econ-paper-studio>"
+python -m pip install -e .
 ```
 
 如果 `econ-studio` 不可用，先用 `python scripts\cli.py` 替代。
@@ -88,12 +88,3 @@ econ-studio paper audit `
 ```
 
 预期：生成大纲和草稿质检报告。报告通过只说明这个 fixture 没有明显结构问题，不说明引用已经被核验。
-
-## 8. 全量测试
-
-```powershell
-python -m pytest tests/ -p no:cacheprovider
-python -m ruff check scripts tests
-```
-
-预期：pytest 全绿，ruff 无错误。

@@ -1,0 +1,16 @@
+---
+description: Use econ-paper-studio for empirical economics papers, econometrics, data audit, citation checks, and manuscript QA.
+alwaysApply: false
+---
+
+# econ-paper-studio
+
+When the user is working on an empirical economics paper or asks for econometric/paper-writing help:
+
+1. Read `AGENTS.md`, `SKILL.md`, `skill_loadout.yaml`, `docs/UPSTREAM_SKILLS.md`, and `docs/AGENT_RUNBOOK.md`.
+2. Treat this as an agent-native workflow. Load or read upstream skills before substantive econometrics, writing, or citation work.
+3. Run `econ-studio doctor --strict` before major work.
+4. Use `econ-studio data-audit` before running models.
+5. Use `econ-studio verify` and `econ-studio paper audit` before claiming readiness.
+6. Do not fabricate citations, data results, Stata/R output, or manuscript edits.
+7. If a linked skill is unavailable, follow `docs/QUALITY_GATES.md` manually.

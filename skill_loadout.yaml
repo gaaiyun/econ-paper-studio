@@ -1,5 +1,24 @@
 version: 1
 purpose: "Companion skills to load when using econ-paper-studio for empirical research and paper writing."
+project_entrypoints:
+  - "AGENTS.md"
+  - "SKILL.md"
+  - "agent_manifest.yaml"
+  - "docs/AGENT_RUNBOOK.md"
+  - "docs/UPSTREAM_SKILLS.md"
+  - "docs/QUALITY_GATES.md"
+external_reference_policy:
+  install_outside_repo: true
+  preferred_reference_dir: "_references/upstream-skills"
+  read_before_use:
+    - "SKILL.md"
+    - "README"
+    - "license"
+  record_in_session:
+    - "skill name"
+    - "source URL"
+    - "version or commit when available"
+    - "what was actually used"
 load_order:
   - name: "superpowers:using-superpowers"
     required: true
@@ -12,7 +31,7 @@ load_order:
     role: "Debug Stata, R, Python, CSDID, DML, TERGM, and data pipeline failures by root cause."
   - name: "superpowers:verification-before-completion"
     required: true
-    role: "Require fresh tests, lint, smoke checks, and CI evidence before completion claims."
+    role: "Require fresh evidence before completion claims."
   - name: "data:statistical-analysis"
     required: true
     role: "Keep statistical claims, effect sizes, significance, sample size, multiple testing, and causal language bounded."
@@ -37,6 +56,31 @@ external_references:
     role: "No fabricated citations, repo-first understanding, one-sentence contribution, reviewer checklist."
   - name: "AI-research-SKILLs/academic-plotting"
     role: "Publication-quality plots, vector output, uncertainty display, captions, and table standards."
+upstream_skill_sources:
+  - name: "Awesome-Agent-Skills-for-Empirical-Research"
+    source: "https://github.com/brycewang-stanford/Awesome-Agent-Skills-for-Empirical-Research"
+    role: "Upstream navigation for empirical research skills."
+  - name: "StatsPAI"
+    source: "https://github.com/brycewang-stanford/StatsPAI"
+    role: "Agent-native causal inference and applied econometrics API reference."
+  - name: "academic-research-skills"
+    source: "https://github.com/Imbad0202/academic-research-skills"
+    role: "Academic research, writing, review, revision, and finalize workflow."
+  - name: "superpowers"
+    source: "https://github.com/obra/superpowers"
+    role: "Skill routing, planning, systematic debugging, and completion verification."
+  - name: "stata-skill"
+    source: "https://github.com/dylantmoore/stata-skill"
+    role: "Stata idioms, do-file writing, data management, econometrics, and community packages."
+  - name: "claude-code-skills-social-science"
+    source: "https://github.com/sshtomar/claude-code-skills-social-science"
+    role: "Social-science method discipline for causal inference workflows."
+  - name: "humanizer"
+    source: "https://github.com/blader/humanizer"
+    role: "Remove AI-like writing patterns and vague academic filler."
+  - name: "AI-Research-SKILLs"
+    source: "https://github.com/Orchestra-Research/AI-Research-SKILLs"
+    role: "Writing and academic plotting references; adapt to economics rather than ML venues."
 fallback:
   - "If companion skills are unavailable, follow docs/AGENT_RUNBOOK.md and docs/QUALITY_GATES.md."
   - "Always run econ-studio doctor, data-audit, verify, and paper audit before delivery."

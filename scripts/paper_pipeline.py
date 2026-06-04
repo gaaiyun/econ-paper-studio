@@ -58,14 +58,19 @@ def _has_heading(text: str, patterns: list[str]) -> bool:
     return any(re.search(pattern, text, flags=re.IGNORECASE | re.MULTILINE) for pattern in patterns)
 
 
+def _heading_pattern(names: str) -> str:
+    prefix = r"(?:[IVXLCDM]+\.\s+|\d+[\.\)]\s+|appendix\s+[A-Z]\.\s+)?"
+    return rf"^\s*#+\s*{prefix}(?:{names})\b"
+
+
 def _section_check(text: str) -> CheckResult:
     sections = {
-        "introduction": [r"^\s*#+\s*(introduction|引言|导论)\b"],
-        "data": [r"^\s*#+\s*(data|sample|数据|样本)\b"],
-        "empirical strategy": [r"^\s*#+\s*(empirical strategy|method|methodology|识别|方法|模型)\b"],
-        "results": [r"^\s*#+\s*(results|findings|结果|实证结果)\b"],
-        "robustness": [r"^\s*#+\s*(robustness|sensitivity|稳健性|敏感性)\b"],
-        "references": [r"^\s*#+\s*(references|bibliography|参考文献)\b"],
+        "introduction": [_heading_pattern(r"introduction|引言|导论")],
+        "data": [_heading_pattern(r"data|sample|数据|样本")],
+        "empirical strategy": [_heading_pattern(r"empirical strategy|method|methodology|识别|方法|模型")],
+        "results": [_heading_pattern(r"results|findings|结果|实证结果")],
+        "robustness": [_heading_pattern(r"robustness|sensitivity|稳健性|敏感性")],
+        "references": [_heading_pattern(r"references|bibliography|参考文献")],
     }
     missing = [name for name, patterns in sections.items() if not _has_heading(text, patterns)]
     return _check(
@@ -82,7 +87,9 @@ def _contribution_check(text: str) -> CheckResult:
     patterns = [
         r"\bcentral contribution\b",
         r"\bmain contribution\b",
+        r"\bthe contribution is\b",
         r"\bthis paper contributes\b",
+        r"\bthe paper contributes\b",
         r"\bour contribution\b",
         r"本文(的)?(核心|主要)?贡献",
         r"本文贡献在于",

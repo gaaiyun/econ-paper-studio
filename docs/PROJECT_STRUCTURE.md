@@ -1,19 +1,21 @@
 # Project Structure
 
-这个仓库故意保持小而清楚。根目录放入口文件，细节文档放 `docs/`，方法和质量规则放 `references/`，代码在 `scripts/`，测试在 `tests/`。
+这个仓库故意保持小而清楚。根目录放入口文件，细节文档放 `docs/`，方法和质量规则放 `references/`，代码在 `scripts/`。
 
 ## 顶层目录
 
 | 路径 | 是否提交 | 用途 |
 |---|---|---|
-| `.github/workflows/` | 是 | GitHub Actions 测试配置 |
+| `.cursor/rules/` | 是 | Cursor 项目规则 |
+| `.github/workflows/` | 是 | GitHub Actions 自动化检查配置 |
+| `.opencode/skills/` | 是 | OpenCode skill wrapper |
 | `docs/` | 是 | 人看的详细文档和 agent runbook |
-| `examples/` | 是 | 可跑的 smoke case 和 fixture |
+| `examples/` | 是 | 可跑的样例和 fixture |
+| `integrations/` | 是 | Coze 等外部平台的工具 schema 或 runner 说明 |
 | `references/` | 是 | 数据、写作、方法的协议和检查规则 |
 | `scripts/` | 是 | CLI 子命令实现 |
-| `tests/` | 是 | 离线 pytest |
 | `outputs/` | 否 | 本地生成的 session、报告、do-files |
-| `.pytest_cache/`、`.ruff_cache/` | 否 | 本地测试/ruff 缓存 |
+| 本地工具缓存目录 | 否 | 由开发工具临时生成，不要提交 |
 | `*.egg-info/` | 否 | 本地 editable install 产物 |
 
 ## 根目录文件
@@ -23,13 +25,24 @@
 | `README.md` | 项目简介和最小可运行路径 |
 | `INSTALL_CN.md` | Windows / PowerShell 安装说明 |
 | `WORKFLOW.md` | 五阶段研究流程 |
+| `AGENTS.md` | 通用 agent 项目指令 |
 | `SKILL.md` | Claude/Cursor/Codex skill 入口 |
 | `skill_loadout.yaml` | 配套 skills 的机器可读清单 |
+| `agent_manifest.yaml` | 平台入口和命令映射 |
 | `RESEARCH_QUESTION.md` | 研究问题模板 |
 | `PROJECT_PLAN.md` | 当前状态和路线图 |
-| `TESTING.md` | 测试说明 |
-| `pyproject.toml` | 包元数据、依赖和测试/ruff 配置 |
+| `pyproject.toml` | 包元数据、依赖和工具配置 |
 | `.env.example` | 可选环境变量示例 |
+
+## docs/
+
+| 文件 | 作用 |
+|---|---|
+| `AGENT_RUNBOOK.md` | agent 接手真实研究任务时的顺序 |
+| `AGENT_INTEGRATIONS.md` | Claude Code、OpenCode、Codex、Cursor、Coze 接入 |
+| `SKILL_LOADOUT.md` | 本项目建议加载的 companion skills |
+| `UPSTREAM_SKILLS.md` | 上游 skills 部署、加载和来源 |
+| `QUALITY_GATES.md` | 投稿/交付前质量闸门 |
 
 ## scripts/
 

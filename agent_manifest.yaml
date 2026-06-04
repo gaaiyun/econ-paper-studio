@@ -1,0 +1,37 @@
+version: 1
+name: econ-paper-studio
+purpose: "Agent-native empirical economics workflow for econometrics, data audit, paper writing, citation boundaries, and delivery verification."
+entrypoints:
+  generic_agents: AGENTS.md
+  skill: SKILL.md
+  skill_loadout: skill_loadout.yaml
+  runbook: docs/AGENT_RUNBOOK.md
+  integrations: docs/AGENT_INTEGRATIONS.md
+  upstream_skills: docs/UPSTREAM_SKILLS.md
+  quality_gates: docs/QUALITY_GATES.md
+platforms:
+  claude_code:
+    mode: "SKILL.md"
+    install_notes: "Use the repository root as a project skill or copy/symlink it into .claude/skills/econ-paper-studio."
+  opencode:
+    mode: ".opencode/skills/econ-paper-studio/SKILL.md"
+    install_notes: "OpenCode can discover .opencode, .claude, and .agents skill folders."
+  codex:
+    mode: "AGENTS.md + skill_loadout.yaml"
+    install_notes: "Codex reads repository instructions and can run CLI/test commands in the workspace."
+  cursor:
+    mode: "AGENTS.md + .cursor/rules/econ-paper-studio.mdc"
+    install_notes: "Cursor can use project rules and AGENTS.md for repository-specific agent behavior."
+  coze:
+    mode: "workflow/tool wrapper"
+    install_notes: "Expose selected econ-studio commands through an API runner; Coze workflow calls the runner and stores outputs."
+commands:
+  doctor: "econ-studio doctor --strict"
+  data_audit: "econ-studio data-audit --csv <csv> --key <unit> --key <time> --outcome <y> --treatment <d> --cluster <cluster>"
+  verify: "econ-studio verify --strategy <strategy> --analysis <dir> --paper <draft>"
+  paper_audit: "econ-studio paper audit --paper <draft>"
+live_tools_expected:
+  - "Stata/R/Python execution"
+  - "Crossref/OpenAlex/Semantic Scholar citation checks"
+  - "MCP/database/file connectors where available"
+  - "docx rendering and visual QA"

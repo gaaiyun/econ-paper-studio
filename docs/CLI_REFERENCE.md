@@ -21,7 +21,7 @@ econ-studio doctor --strict
 econ-studio doctor --json
 ```
 
-`--strict` 会在 required check 失败时返回非零退出码，适合 CI 和交付前检查。
+`--strict` 会在 required check 失败时返回非零退出码，适合交付前检查。
 
 ## brainstorm
 

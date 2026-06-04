@@ -5,18 +5,23 @@
 ## 0. 接手前先做
 
 ```powershell
-cd "G:\github_project_0516\econ-paper-studio"
+cd "<path-to-econ-paper-studio>"
 econ-studio doctor --strict
 ```
 
 然后读：
 
-1. `SKILL.md`
-2. `docs/SKILL_LOADOUT.md`
-3. `WORKFLOW.md`
-4. 目标 session 或目标论文目录里的 handoff / README / changelog
+1. `AGENTS.md`
+2. `SKILL.md`
+3. `agent_manifest.yaml`
+4. `docs/SKILL_LOADOUT.md`
+5. `docs/UPSTREAM_SKILLS.md`
+6. `WORKFLOW.md`
+7. 目标 session 或目标论文目录里的 handoff / README / changelog
 
 如果用户给了自己的数据目录或论文目录，先读那里的说明。不要先改文件。
+
+如果平台支持 skills，先按 `skill_loadout.yaml` 和 `docs/UPSTREAM_SKILLS.md` 加载上游技能包；如果不支持，就读取对应上游文档，并把缺失项写进交付说明。
 
 ## 1. 研究问题
 
@@ -126,16 +131,14 @@ econ-studio promote <session> --version v2
 
 每一轮都要能说明：改了什么、为什么改、证据在哪个脚本或表图里。
 
-## 8. 结束前必须验证
+## 8. 结束前必须说明
 
-结束前至少跑：
+结束前至少确认：
 
-```powershell
-python -m pytest tests/ -p no:cacheprovider
-python -m ruff check scripts tests
-python -m py_compile scripts\cli.py scripts\doctor.py scripts\identify_strategy.py scripts\scaffold.py scripts\session.py scripts\robustness_checks.py scripts\data_audit.py scripts\paper_pipeline.py
-econ-studio doctor --strict
-git status --short --branch
-```
+- `econ-studio doctor --strict` 能启动本项目入口；
+- 数据审计、方法核验和论文审计的报告路径已经写清楚；
+- 哪些模型真实运行过，哪些只是脚手架或待运行；
+- 哪些引用真实核验过，哪些还只是待核验；
+- 交付稿没有把静态检查包装成实证结果。
 
-如果改了 README 里的 quickstart，还要照 README 跑一次 smoke case。没有 fresh verification，就不要说完成。
+没有这些说明，就不要说完成。

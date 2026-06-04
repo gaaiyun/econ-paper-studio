@@ -23,7 +23,7 @@ When the platform has these skills available, load them before doing substantive
 8. `content-research-writer`
 9. `documents:documents`
 
-Detailed purpose, fallback behavior, and external writing references are documented in `docs/SKILL_LOADOUT.md`.
+Detailed purpose, fallback behavior, and upstream installation guidance are documented in `docs/SKILL_LOADOUT.md` and `docs/UPSTREAM_SKILLS.md`.
 The same loadout is also available as machine-readable metadata in `skill_loadout.yaml`.
 
 Do not treat missing companion skills as a reason to stop. Fall back to the local CLI gates: `doctor`, `identify`, `data-audit`, `scaffold`, `verify`, `paper audit`, and `session`.
@@ -118,7 +118,7 @@ Checks:
 - **High**: placebo, heterogeneity, alternative bandwidth/cluster levels, HonestDiD sensitivity, selection (Heckman/Lee bounds)
 - **Audit**: AI-style filler phrases, obvious citation placeholders, missing references section risk
 
-This verifier is offline-first. It does not prove numerical correctness or source support; use it as a blocking static gate before live Stata/R/Python runs and external citation verification.
+This verifier is a static gate. It does not prove numerical correctness or source support; use it before live Stata/R/Python runs and external citation verification so the agent does not skip required evidence.
 
 ### Stage 5: paper/write (outline, audit, session)
 
@@ -168,26 +168,30 @@ If those skills are not installed, this skill still works in "standalone mode" b
 | File | Role |
 |---|---|
 | `README.md` | Project intro |
+| `AGENTS.md` | Generic agent instructions for Codex, Cursor, OpenCode, and similar agents |
 | `skill_loadout.yaml` | Machine-readable companion skill list |
+| `agent_manifest.yaml` | Platform entrypoints and safe command mapping |
 | `PROJECT_PLAN.md` | Full task breakdown |
 | `WORKFLOW.md` | Five-stage workflow detail |
 | `docs/AGENT_RUNBOOK.md` | Step-by-step agent handoff and execution protocol |
+| `docs/AGENT_INTEGRATIONS.md` | Claude Code, OpenCode, Codex, Cursor, and Coze setup |
 | `docs/SKILL_LOADOUT.md` | Companion skills to load with this project |
+| `docs/UPSTREAM_SKILLS.md` | Upstream skills bundle and installation policy |
 | `docs/CLI_REFERENCE.md` | Command reference |
 | `docs/QUALITY_GATES.md` | Pre-delivery gates |
 | `docs/PROJECT_STRUCTURE.md` | Directory layout and commit boundaries |
+| `docs/REAL_WORLD_TRIALS.md` | Real project trials and known boundaries |
 | `RESEARCH_QUESTION.md` | Stage 1 template |
 | `INSTALL_CN.md` | Chinese install guide |
 | `scripts/identify_strategy.py` | Stage 2 strategy selector |
 | `scripts/data_audit.py` | Stage 3 data validation gate |
 | `scripts/scaffold.py` | Stage 3 Stata/R scaffold generator |
-| `scripts/robustness_checks.py` | Stage 4 offline static verifier |
+| `scripts/robustness_checks.py` | Stage 4 static verifier for method evidence and writing risks |
 | `scripts/paper_pipeline.py` | Stage 5 paper outline and writing-quality audit |
 | `scripts/session.py` | Stage 5 paper session manager |
 | `scripts/cli.py` | Unified `econ-studio` entry |
 | `references/` | Methods + anti-AI phrase references |
-| `examples/` | Smoke-test research brief and planned case studies |
-| `tests/` | 124 offline pytest tests |
+| `examples/` | Example research brief and planned case studies |
 
 ## Notes
 
@@ -196,4 +200,4 @@ If those skills are not installed, this skill still works in "standalone mode" b
 - **Optional**: Volcengine ARK_API_KEY for vision-based table verification
 - **Optional**: Semantic Scholar API key for citation validation (free tier OK)
 
-This skill is at version **0.2.0**. The offline CLI path is runnable; external citation verification and real Stata/R execution remain explicit user-side/live-tool steps.
+This skill is at version **0.2.1**. The CLI gates are runnable; external citation verification and real Stata/R/Python execution remain explicit live-tool steps.

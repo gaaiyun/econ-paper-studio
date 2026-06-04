@@ -62,7 +62,7 @@ question → design → execute → verify → write
 
 如果你的论文不存在，世界会缺少什么知识？一个段落写完。
 
-**测试**：
+**判断**：
 - 这个问题别人做过吗？做到什么程度？
 - 你能贡献的是什么——新数据？新方法？新机制？反例？
 
@@ -224,7 +224,7 @@ python scripts/robustness_checks.py \
   --output outputs/<session>/verify_report.md
 ```
 
-会基于策略扫描分析脚本和论文文本，生成一份**针对性的**静态核验报告。它是离线质量闸门，不替代真实 Stata/R/Python 运行或外部引用核验。
+会基于策略扫描分析脚本和论文文本，生成一份**针对性的**静态核验报告。它是交付前闸门，不替代真实 Stata/R/Python 运行或外部引用核验。
 
 ### DiD 案例的清单（典型）
 
@@ -372,7 +372,7 @@ python scripts/data_audit.py --csv examples/case-min-wage-did/panel_sample.csv \
 
 python scripts/scaffold.py --strategy DiD --session my-mw-study
 
-# Stage 4: 离线质量核验
+# Stage 4: 方法证据和写作风险核验
 python scripts/robustness_checks.py \
   --strategy DiD \
   --analysis outputs/my-mw-study \

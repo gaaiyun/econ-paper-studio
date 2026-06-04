@@ -87,21 +87,19 @@ econ-studio paper audit --paper paper\draft.md --fail-under 8
 
 ## Gate 7. 引用
 
-当前仓库只做离线 placeholder 检查。真实引用要另行核验：
+当前仓库只做静态 placeholder 检查。真实引用要另行核验：
 
 - DOI 或期刊官网能打开；
 - 文献标题、作者、年份匹配；
 - 文献真的支持文中那句话；
 - 没有把综述、方法文献、经验结果张冠李戴。
 
-## Gate 8. 提交前
+## Gate 8. 交付说明
 
-```powershell
-python -m pytest tests/ -p no:cacheprovider
-python -m ruff check scripts tests
-python -m py_compile scripts\cli.py scripts\doctor.py scripts\identify_strategy.py scripts\scaffold.py scripts\session.py scripts\robustness_checks.py scripts\data_audit.py scripts\paper_pipeline.py
-git diff --check
-git status --short --branch
-```
+交付给导师、合作者、客户或审稿人之前，最后写一段简短说明：
 
-如果要更新 GitHub，还要确认 Actions 通过。
+- 哪些模型和脚本已经实际运行；
+- 哪些引用已经核验，哪些仍待核验；
+- 哪些表图由脚本生成，输出路径在哪里；
+- 哪些结论只能写成相关性、事件研究或描述性证据；
+- 哪些限制需要在正文或附录中明说。

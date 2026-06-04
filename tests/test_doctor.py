@@ -23,10 +23,17 @@ def test_run_checks_reports_required_project_files():
     assert checks["file.scripts/data_audit.py"]["passed"]
     assert checks["file.scripts/paper_pipeline.py"]["passed"]
     assert checks["file.scripts/robustness_checks.py"]["passed"]
+    assert checks["file.AGENTS.md"]["passed"]
+    assert checks["file.agent_manifest.yaml"]["passed"]
     assert checks["file.skill_loadout.yaml"]["passed"]
+    assert checks["file.docs/AGENT_INTEGRATIONS.md"]["passed"]
     assert checks["file.docs/SKILL_LOADOUT.md"]["passed"]
+    assert checks["file.docs/UPSTREAM_SKILLS.md"]["passed"]
     assert checks["file.docs/AGENT_RUNBOOK.md"]["passed"]
     assert checks["file.docs/PROJECT_STRUCTURE.md"]["passed"]
+    assert checks["file..cursor/rules/econ-paper-studio.mdc"]["passed"]
+    assert checks["file..opencode/skills/econ-paper-studio/SKILL.md"]["passed"]
+    assert checks["file.integrations/coze/econ-paper-studio-tool-schema.json"]["passed"]
 
 
 def test_doctor_cli_json_output_is_parseable():

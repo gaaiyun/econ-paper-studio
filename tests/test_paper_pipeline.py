@@ -61,6 +61,30 @@ def test_audit_paper_rewards_complete_concrete_draft(tmp_path):
     assert not [item for item in result.checks if item.severity == "critical" and not item.passed]
 
 
+def test_audit_paper_recognizes_journal_numbered_headings(tmp_path):
+    draft = tmp_path / "journal_draft.md"
+    draft.write_text(
+        "# I. Introduction\n\n"
+        "The contribution is narrow and testable: the paper links communication distance to repricing magnitude.\n\n"
+        "# IV. Data\n\n"
+        "The sample is a currency-tenor event panel.\n\n"
+        "# VII. Empirical Strategy\n\n"
+        "The model uses fixed effects and clustered inference.\n\n"
+        "# VIII. Results\n\n"
+        "Table 1. Main estimates for the event-panel sample with two-way clustered standard errors.\n\n"
+        "# X. Robustness and Inference\n\n"
+        "Figure 1. Sensitivity of the main coefficient across inference choices and event windows.\n\n"
+        "# References\n\n"
+        "Du, Tepper, and Verdelhan. 2018.\n",
+        encoding="utf-8",
+    )
+
+    checks = {item.id: item for item in audit_paper(draft).checks}
+
+    assert checks["paper.core_sections"].passed
+    assert checks["paper.contribution_sentence"].passed
+
+
 def test_render_outline_uses_brief_without_fabricating_sources(tmp_path):
     brief = {
         "question": "最低工资调整对青年就业率的因果效应是什么？",

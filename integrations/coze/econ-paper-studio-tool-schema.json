@@ -1,0 +1,40 @@
+{
+  "name": "econ_paper_studio_run",
+  "description": "Run a bounded econ-paper-studio command through a trusted runner service and return the report text plus artifacts.",
+  "parameters": {
+    "type": "object",
+    "required": ["command", "workspace_id"],
+    "properties": {
+      "command": {
+        "type": "string",
+        "enum": ["doctor", "identify", "data_audit", "verify", "paper_outline", "paper_audit"],
+        "description": "Allowed econ-paper-studio action."
+      },
+      "workspace_id": {
+        "type": "string",
+        "description": "Server-side workspace/session identifier. The runner maps it to an allowed directory."
+      },
+      "brief_path": {
+        "type": "string",
+        "description": "Path to a research brief inside the allowed workspace."
+      },
+      "csv_path": {
+        "type": "string",
+        "description": "Path to a CSV analysis file inside the allowed workspace."
+      },
+      "analysis_path": {
+        "type": "string",
+        "description": "Path to an analysis/session directory inside the allowed workspace."
+      },
+      "paper_path": {
+        "type": "string",
+        "description": "Path to a Markdown/LaTeX/text draft inside the allowed workspace."
+      },
+      "strategy": {
+        "type": "string",
+        "enum": ["DiD", "RDD", "IV", "SCM", "PSM", "Matching", "DML"],
+        "description": "Econometric strategy for verify."
+      }
+    }
+  }
+}

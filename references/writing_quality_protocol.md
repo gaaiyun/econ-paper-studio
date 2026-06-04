@@ -24,4 +24,4 @@ econ-studio paper audit `
 
 ## Citation Boundary
 
-This repository only performs offline placeholder checks. Verifying that a cited work exists, is the right work, and supports a specific claim still requires Crossref/OpenAlex/Semantic Scholar, a DOI page, a journal page, or manual reading.
+This repository only performs static placeholder checks. Verifying that a cited work exists, is the right work, and supports a specific claim still requires Crossref/OpenAlex/Semantic Scholar, a DOI page, a journal page, or manual reading.
