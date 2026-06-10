@@ -6,6 +6,7 @@ entrypoints:
   skill: SKILL.md
   skill_loadout: skill_loadout.yaml
   research_skill_registry: research_skill_registry.yaml
+  design: docs/DESIGN.md
   runbook: docs/AGENT_RUNBOOK.md
   integrations: docs/AGENT_INTEGRATIONS.md
   upstream_skills: docs/UPSTREAM_SKILLS.md

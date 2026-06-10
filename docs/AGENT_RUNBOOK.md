@@ -15,10 +15,11 @@ econ-studio doctor --strict
 2. `SKILL.md`
 3. `agent_manifest.yaml`
 4. `research_skill_registry.yaml`
-5. `docs/SKILL_LOADOUT.md`
-6. `docs/UPSTREAM_SKILLS.md`
-7. `WORKFLOW.md`
-8. 目标 session 或目标论文目录里的 handoff / README / changelog
+5. `docs/DESIGN.md`
+6. `docs/SKILL_LOADOUT.md`
+7. `docs/UPSTREAM_SKILLS.md`
+8. `WORKFLOW.md`
+9. 目标 session 或目标论文目录里的 handoff / README / changelog
 
 如果用户给了自己的数据目录或论文目录，先读那里的说明。不要先改文件。
 

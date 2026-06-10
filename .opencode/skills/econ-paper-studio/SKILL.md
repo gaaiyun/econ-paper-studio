@@ -15,9 +15,10 @@ Read these files first:
 2. `SKILL.md`
 3. `skill_loadout.yaml`
 4. `research_skill_registry.yaml`
-5. `docs/UPSTREAM_SKILLS.md`
-6. `docs/AGENT_RUNBOOK.md`
-7. `docs/QUALITY_GATES.md`
+5. `docs/DESIGN.md`
+6. `docs/UPSTREAM_SKILLS.md`
+7. `docs/AGENT_RUNBOOK.md`
+8. `docs/QUALITY_GATES.md`
 
 This project is agent-native. Use `econ-studio` CLI gates together with live Stata/R/Python execution, citation APIs, data connectors, and document-rendering tools when available.
 Start with `econ-studio skills plan --task full-paper`, then use `skills audit` before loading third-party skill directories.

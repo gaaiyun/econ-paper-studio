@@ -225,6 +225,7 @@ If those skills are not installed, this skill still works in "standalone mode" b
 | `PROJECT_PLAN.md` | Full task breakdown |
 | `WORKFLOW.md` | Five-stage workflow detail |
 | `docs/AGENT_RUNBOOK.md` | Step-by-step agent handoff and execution protocol |
+| `docs/DESIGN.md` | Design rationale, framework, evidence chain, and workflow diagrams |
 | `docs/AGENT_INTEGRATIONS.md` | Claude Code, OpenCode, Codex, Cursor, and Coze setup |
 | `docs/SKILL_LOADOUT.md` | Companion skills to load with this project |
 | `docs/UPSTREAM_SKILLS.md` | Upstream skills bundle and installation policy |
@@ -253,4 +254,4 @@ If those skills are not installed, this skill still works in "standalone mode" b
 - **Optional**: Volcengine ARK_API_KEY for vision-based table verification
 - **Optional**: Semantic Scholar API key for citation validation (free tier OK)
 
-This skill is at version **0.3.0**. The CLI gates are runnable; external citation verification and real Stata/R/Python execution remain explicit live-tool steps.
+This skill is at version **0.3.1**. The CLI gates are runnable; external citation verification and real Stata/R/Python execution remain explicit live-tool steps.

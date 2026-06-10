@@ -25,6 +25,7 @@ REQUIRED_FILES = [
     ".opencode/skills/econ-paper-studio/SKILL.md",
     "docs/README.md",
     "docs/QUICKSTART_CN.md",
+    "docs/DESIGN.md",
     "docs/CLI_REFERENCE.md",
     "docs/AGENT_RUNBOOK.md",
     "docs/AGENT_INTEGRATIONS.md",

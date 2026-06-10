@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "econ-paper-studio"
-version = "0.3.0"
+version = "0.3.1"
 description = "Agent-native empirical economics research workflow: skills routing -> design memo -> data contract -> evidence ledger -> claim audit -> reviewer gauntlet."
 readme = "README.md"
 requires-python = ">=3.10"

@@ -2,8 +2,19 @@
 
 把一篇计量实证论文从想法到投出去拆成一组可检查的阶段。每个阶段都有"何时跳过"的明确条件，**不是教条**。
 
-```
-skills → question → design → data-contract → execute → evidence-ledger → claim-audit → reviewer-gauntlet → write
+```mermaid
+flowchart LR
+    Skills["skills"]
+    Question["question"]
+    Design["design"]
+    DataContract["data-contract"]
+    Execute["execute"]
+    Ledger["evidence-ledger"]
+    ClaimAudit["claim-audit"]
+    Reviewer["reviewer-gauntlet"]
+    Write["write"]
+
+    Skills --> Question --> Design --> DataContract --> Execute --> Ledger --> ClaimAudit --> Reviewer --> Write
 ```
 
 其中 `data-audit` 是 execute 前的硬闸门，`ledger` 和 `claim-audit` 是写作前的证据闸门：先检查分析样本结构，再让 Stata/R/Python 跑模型，最后把每条论文结论连回表图、代码、数据和引用核验状态。
@@ -138,24 +149,30 @@ python scripts/evidence_pipeline.py design-memo --brief outputs/<session>/resear
 
 ### 决策树概要
 
-```
-有处理 (treatment)？
-├─ Yes
-│   ├─ 横截面对比（截面）
-│   │   └─ Matching / DML
-│   ├─ 处理变量在 unit 和 time 上都有变化
-│   │   └─ DiD（→ did-analysis skill）
-│   │       ├─ 二元 + 同时处理 → 经典 TWFE OK
-│   │       └─ Staggered adoption → CS / Sun-Abraham / BJS
-│   ├─ 单一处理单位 vs 多控制单位
-│   │   └─ Synthetic Control（→ causal-inference SCM 章节）
-│   └─ 处理由某个 running variable 的阈值决定
-│       └─ RDD（→ causal-inference RDD 章节）
-└─ No (只是观察)
-    ├─ 有外生 instrument
-    │   └─ IV（→ causal-inference IV 章节）
-    └─ 只能 conditional on observables
-        └─ DML / Matching（坦诚说选择 on observables 弱点）
+```mermaid
+flowchart TB
+    Start{"有明确 treatment 或政策冲击吗？"}
+    Panel{"treatment 在 unit 和 time 上变化吗？"}
+    Cross{"只有横截面对比吗？"}
+    Single{"单一处理单位对多个控制单位吗？"}
+    Cutoff{"处理由 running variable 阈值决定吗？"}
+    Instrument{"有没有可信 instrument？"}
+    Observables{"只能依赖 observables 吗？"}
+
+    Start -->|Yes| Panel
+    Panel -->|Yes| DiD["DiD: 检查平行趋势、错时处理和聚类层级"]
+    Panel -->|No| Cross
+    Cross -->|Yes| Matching["Matching / DML: 明确 selection on observables 边界"]
+    Cross -->|No| Single
+    Single -->|Yes| SCM["Synthetic Control: 检查 pre-fit 和 placebo"]
+    Single -->|No| Cutoff
+    Cutoff -->|Yes| RDD["RDD: 检查操纵、带宽和 cutoff"]
+    Cutoff -->|No| Instrument
+    Start -->|No| Instrument
+    Instrument -->|Yes| IV["IV: 检查 first-stage、weak-IV 和 exclusion restriction"]
+    Instrument -->|No| Observables
+    Observables -->|Yes| DML["DML / Matching: 不写成强因果"]
+    Observables -->|No| Descriptive["描述性分析或重新设计研究问题"]
 ```
 
 ### Stage 2 产出

@@ -7,7 +7,7 @@ alwaysApply: false
 
 When the user is working on an empirical economics paper or asks for econometric/paper-writing help:
 
-1. Read `AGENTS.md`, `SKILL.md`, `skill_loadout.yaml`, `research_skill_registry.yaml`, `docs/UPSTREAM_SKILLS.md`, and `docs/AGENT_RUNBOOK.md`.
+1. Read `AGENTS.md`, `SKILL.md`, `skill_loadout.yaml`, `research_skill_registry.yaml`, `docs/DESIGN.md`, `docs/UPSTREAM_SKILLS.md`, and `docs/AGENT_RUNBOOK.md`.
 2. Treat this as an agent-native workflow. Load or read upstream skills before substantive econometrics, writing, or citation work.
 3. Run `econ-studio skills plan --task full-paper` and audit third-party skill directories before loading them.
 4. Run `econ-studio doctor --strict` before major work.

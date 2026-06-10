@@ -4,9 +4,43 @@
 
 它不替研究者编造结果、引用或结论。它做的是把 agent 容易跳过的步骤固定下来：先说明问题和识别假设，再检查数据结构，再生成可复现代码，再核验方法证据和论文文本。
 
-```text
-skills -> question -> design -> data-contract -> execute -> evidence-ledger -> claim-audit -> reviewer-gauntlet -> paper -> session
+```mermaid
+flowchart LR
+    Skills["skills"]
+    Question["question"]
+    Design["design"]
+    Data["data-contract"]
+    Execute["execute"]
+    Ledger["evidence-ledger"]
+    Claims["claim-audit"]
+    Review["reviewer-gauntlet"]
+    Paper["paper"]
+    Session["session"]
+
+    Skills --> Question --> Design --> Data --> Execute --> Ledger --> Claims --> Review --> Paper --> Session
 ```
+
+完整设计思路和框架见 [docs/DESIGN.md](docs/DESIGN.md)。
+
+## 设计思路
+
+`econ-paper-studio` 只做三件事：给 agent 明确下一步该用哪些 skills；把计量研究拆成可以检查的 workflow gates；把论文里的每条核心结论连回数据、代码、表图和引用核验状态。
+
+```mermaid
+flowchart TB
+    Agent["Agent 平台\nCodex / Claude Code / OpenCode / Cursor / Coze"]
+    Adapter["Adapter + 编排层\nAGENTS.md / SKILL.md / registry / manifest"]
+    Gates["Workflow gates\nskills / design / data-audit / scaffold / ledger / claim-audit / reviewer"]
+    Tools["真实研究工具\nStata / R / Python / citation APIs / docx-PDF QA / data connectors"]
+    Paper["可交接产物\n设计 memo / data contract / analysis code / evidence ledger / paper audit"]
+
+    Agent --> Adapter --> Gates
+    Gates --> Tools
+    Tools --> Paper
+    Paper --> Gates
+```
+
+真实可用的标准不是“生成一篇像论文的文本”，而是 agent 接手后能按顺序完成：先收窄问题和识别，再审计数据，再调用真实 Stata/R/Python 跑模型，把结果写入 evidence ledger，最后用 `claim-audit` 和 `reviewer-gauntlet` 检查正文 claim 是否被证据支持。
 
 ## 当前可用
 
@@ -117,6 +151,7 @@ econ-studio reviewer-gauntlet `
 | 文档 | 用途 |
 |---|---|
 | [docs/QUICKSTART_CN.md](docs/QUICKSTART_CN.md) | 更详细的最小可运行路径 |
+| [docs/DESIGN.md](docs/DESIGN.md) | 设计思路、框架、证据链和 Mermaid 流程图 |
 | [docs/CLI_REFERENCE.md](docs/CLI_REFERENCE.md) | 命令和参数说明 |
 | [docs/AGENT_RUNBOOK.md](docs/AGENT_RUNBOOK.md) | agent 接手项目时的执行顺序 |
 | [docs/AGENT_INTEGRATIONS.md](docs/AGENT_INTEGRATIONS.md) | Claude Code / OpenCode / Codex / Cursor / Coze 接入方式 |

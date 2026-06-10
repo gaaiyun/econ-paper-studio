@@ -8,9 +8,10 @@
 2. `skill_loadout.yaml`
 3. `research_skill_registry.yaml`
 4. `docs/UPSTREAM_SKILLS.md`
-5. `docs/AGENT_RUNBOOK.md`
-6. `docs/SKILL_LOADOUT.md`
-7. `docs/QUALITY_GATES.md`
+5. `docs/DESIGN.md`
+6. `docs/AGENT_RUNBOOK.md`
+7. `docs/SKILL_LOADOUT.md`
+8. `docs/QUALITY_GATES.md`
 
 ## 定位
 

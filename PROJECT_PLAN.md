@@ -56,6 +56,7 @@ econ-paper-studio/
 ├── docs/
 │   ├── README.md
 │   ├── QUICKSTART_CN.md
+│   ├── DESIGN.md
 │   ├── CLI_REFERENCE.md
 │   ├── AGENT_RUNBOOK.md
 │   ├── AGENT_INTEGRATIONS.md
