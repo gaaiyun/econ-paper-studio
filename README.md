@@ -151,7 +151,7 @@ econ-studio reviewer-gauntlet `
 | 文档 | 用途 |
 |---|---|
 | [docs/QUICKSTART_CN.md](docs/QUICKSTART_CN.md) | 更详细的最小可运行路径 |
-| [docs/DESIGN.md](docs/DESIGN.md) | 设计思路、框架、证据链和 Mermaid 流程图 |
+| [docs/DESIGN.md](docs/DESIGN.md) | 设计思路、三层框架、工作平面、状态机、证据链和 Mermaid 流程图 |
 | [docs/CLI_REFERENCE.md](docs/CLI_REFERENCE.md) | 命令和参数说明 |
 | [docs/AGENT_RUNBOOK.md](docs/AGENT_RUNBOOK.md) | agent 接手项目时的执行顺序 |
 | [docs/AGENT_INTEGRATIONS.md](docs/AGENT_INTEGRATIONS.md) | Claude Code / OpenCode / Codex / Cursor / Coze 接入方式 |

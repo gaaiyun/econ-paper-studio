@@ -40,7 +40,7 @@
 | 文件 | 作用 |
 |---|---|
 | `AGENT_RUNBOOK.md` | agent 接手真实研究任务时的顺序 |
-| `DESIGN.md` | 设计思路、框架、流程图和证据链 |
+| `DESIGN.md` | 设计思路、三层框架、工作平面、状态机、流程图和证据链 |
 | `AGENT_INTEGRATIONS.md` | Claude Code、OpenCode、Codex、Cursor、Coze 接入 |
 | `SKILL_LOADOUT.md` | 本项目建议加载的 companion skills |
 | `UPSTREAM_SKILLS.md` | 上游 skills 部署、加载和来源 |

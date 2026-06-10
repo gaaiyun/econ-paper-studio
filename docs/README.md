@@ -5,7 +5,7 @@
 | 文档 | 适合谁看 | 内容 |
 |---|---|---|
 | `QUICKSTART_CN.md` | 第一次使用的人 | 从安装到跑完最小案例 |
-| `DESIGN.md` | 想理解产品设计的人 | 设计思路、三层框架、证据链、上游参考如何被吸收 |
+| `DESIGN.md` | 想理解产品设计的人 | 设计思路、三层框架、工作平面、核心对象、状态机、证据链、上游参考如何被吸收 |
 | `CLI_REFERENCE.md` | 要查命令的人 | 每个命令的参数、输出和常见用法 |
 | `AGENT_RUNBOOK.md` | 让 agent 接手项目的人 | 接手顺序、必须加载的 skills、质量闸门 |
 | `AGENT_INTEGRATIONS.md` | 要接入 OpenCode / Claude Code / Codex / Cursor / Coze 的人 | 各平台入口、推荐提示词、Coze runner 边界 |
